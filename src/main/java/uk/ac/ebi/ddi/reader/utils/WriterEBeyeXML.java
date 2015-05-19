@@ -132,25 +132,25 @@ public class WriterEBeyeXML {
             Element crossReferences = document.createElement("cross_references");
             entry.appendChild(crossReferences);
 
-            if (project.getTaxonomies()!=null) {
-                for (String taxonomy : project.getTaxonomies()) {
-                    Element refSpecies = document.createElement("ref");
-                    refSpecies.setAttribute("dbkey", taxonomy);
-                    refSpecies.setAttribute("dbname", "TAXONOMY");
-                    crossReferences.appendChild(refSpecies);
-                }
-            }
+//            if (project.getTaxonomies()!=null) {
+//                for (String taxonomy : project.getTaxonomies()) {
+//                    Element refSpecies = document.createElement("ref");
+//                    refSpecies.setAttribute("dbkey", taxonomy);
+//                    refSpecies.setAttribute("dbname", "TAXONOMY");
+//                    crossReferences.appendChild(refSpecies);
+//                }
+//            }
 
-            if (project.getReferences()!=null && project.getReferences().size()>0) {
-                for (Reference reference : project.getReferences()) {
-                    if(reference.getPubmedId() != null){
-                        Element refPubMedID = document.createElement("ref");
-                        refPubMedID.setAttribute("dbkey", Integer.toString(reference.getPubmedId()));
-                        refPubMedID.setAttribute("dbname", "pubmed");
-                        crossReferences.appendChild(refPubMedID);
-                    }
-                }
-            }
+//            if (project.getReferences()!=null && project.getReferences().size()>0) {
+//                for (Reference reference : project.getReferences()) {
+//                    if(reference.getPubmedId() != null){
+//                        Element refPubMedID = document.createElement("ref");
+//                        refPubMedID.setAttribute("dbkey", Integer.toString(reference.getPubmedId()));
+//                        refPubMedID.setAttribute("dbname", "pubmed");
+//                        crossReferences.appendChild(refPubMedID);
+//                    }
+//                }
+//            }
 
             if (metabolites !=null && !metabolites.isEmpty()) {
                 for (String protein : metabolites.keySet()) {
@@ -241,110 +241,51 @@ public class WriterEBeyeXML {
                 additionalFields.appendChild(dataProcProt);
             }
 
-            //Add Instrument information
-            if (project.getInstruments()!=null && project.getInstruments().size()>0) {
-                for (CvParam instrument : project.getInstruments()) {
-                    Element fieldInstruemnt = document.createElement("field");
-                    fieldInstruemnt.setAttribute("name", "instrument_platform");
-                    fieldInstruemnt.appendChild(document.createTextNode(instrument.getName()));
-                    additionalFields.appendChild(fieldInstruemnt);
-                }
-            } else {
-                Element fieldInstruemnt = document.createElement("field");
-                fieldInstruemnt.setAttribute("name", "instrument_platform");
-                fieldInstruemnt.appendChild(document.createTextNode(NOT_AVAILABLE));
-                additionalFields.appendChild(fieldInstruemnt);
-            }
+//            //Add Instrument information
+//            if (project.getInstruments()!=null && project.getInstruments().size()>0) {
+//                for (CvParam instrument : project.getInstruments()) {
+//                    Element fieldInstruemnt = document.createElement("field");
+//                    fieldInstruemnt.setAttribute("name", "instrument_platform");
+//                    fieldInstruemnt.appendChild(document.createTextNode(instrument.getName()));
+//                    additionalFields.appendChild(fieldInstruemnt);
+//                }
+//            } else {
+//                Element fieldInstruemnt = document.createElement("field");
+//                fieldInstruemnt.setAttribute("name", "instrument_platform");
+//                fieldInstruemnt.appendChild(document.createTextNode(NOT_AVAILABLE));
+//                additionalFields.appendChild(fieldInstruemnt);
+//            }
 
             //Add information about the species
-            if (project.getSpecies()!=null && project.getSpecies().size()>0) {
-                for (CvParam species : project.getSpecies()) {
-                    Element refSpecies = document.createElement("field");
-                    refSpecies.setAttribute("name", "species");
-                    refSpecies.appendChild(document.createTextNode(species.getValue()));
-                    additionalFields.appendChild(refSpecies);
-                }
-            } else {
-                Element refSpecies = document.createElement("field");
-                refSpecies.setAttribute("name", "species");
-                refSpecies.appendChild(document.createTextNode(NOT_AVAILABLE));
-                additionalFields.appendChild(refSpecies);
-            }
+//            if (project.getSpecies()!=null && project.getSpecies().size()>0) {
+//                for (CvParam species : project.getSpecies()) {
+//                    Element refSpecies = document.createElement("field");
+//                    refSpecies.setAttribute("name", "species");
+//                    refSpecies.appendChild(document.createTextNode(species.getValue()));
+//                    additionalFields.appendChild(refSpecies);
+//                }
+//            } else {
+//                Element refSpecies = document.createElement("field");
+//                refSpecies.setAttribute("name", "species");
+//                refSpecies.appendChild(document.createTextNode(NOT_AVAILABLE));
+//                additionalFields.appendChild(refSpecies);
+//            }
 
-            //Add information about the Cell Type
-            if (project.getCellTypes()!=null && project.getCellTypes().size()>0) {
-                for (CvParam cellType : project.getCellTypes()) {
-                    Element refCellType = document.createElement("field");
-                    refCellType.setAttribute("name", "cell_type");
-                    refCellType.appendChild(document.createTextNode(cellType.getName()));
-                    additionalFields.appendChild(refCellType);
-                }
-            } else {
-                Element refCellType = document.createElement("field");
-                refCellType.setAttribute("name", "cell_type");
-                refCellType.appendChild(document.createTextNode(NOT_AVAILABLE));
-                additionalFields.appendChild(refCellType);
-            }
 
-            //Add disease information
-            if (project.getDiseases()!=null && project.getDiseases().size()>0) {
-                for (CvParam disease : project.getDiseases()) {
-                    Element refDisease = document.createElement("field");
-                    refDisease.setAttribute("name", "disease");
-                    refDisease.appendChild(document.createTextNode(disease.getName()));
-                    additionalFields.appendChild(refDisease);
-                }
-            } else {
-                Element refDisease = document.createElement("field");
-                refDisease.setAttribute("name", "disease");
-                refDisease.appendChild(document.createTextNode(NOT_AVAILABLE));
-                additionalFields.appendChild(refDisease);
-            }
-
-            //Tissue information
-            if (project.getTissues()!=null && project.getTissues().size()>0) {
-                for (CvParam tissue : project.getTissues()) {
-                    Element fieldTissue = document.createElement("field");
-                    fieldTissue.setAttribute("name", "tissue");
-                    fieldTissue.appendChild(document.createTextNode(tissue.getName()));
-                    additionalFields.appendChild(fieldTissue);
-                }
-            } else {
-                Element fieldTissue = document.createElement("field");
-                fieldTissue.setAttribute("name", "tissue");
-                fieldTissue.appendChild(document.createTextNode(NOT_AVAILABLE));
-                additionalFields.appendChild(fieldTissue);
-            }
-
-            //Add PTMs information
-            if (project.getPtms()!=null && project.getPtms().size()>0) {
-                for (CvParam ptmName : project.getPtms()) {
-                    Element modification = document.createElement("field");
-                    modification.setAttribute("name", "modification");
-                    modification.appendChild(document.createTextNode(ptmName.getName()));
-                    additionalFields.appendChild(modification);
-                }
-            } else {
-                Element modification = document.createElement("field");
-                modification.setAttribute("name", "modification");
-                modification.appendChild(document.createTextNode(NOT_AVAILABLE));
-                additionalFields.appendChild(modification);
-            }
-
-            //Add information about experiment type
-            if (project.getExperimentTypes()!=null && project.getExperimentTypes().size()>0) {
-                for (CvParam expType : project.getExperimentTypes()) {
-                    Element refExpType = document.createElement("field");
-                    refExpType.setAttribute("name", "technology_type");
-                    refExpType.appendChild(document.createTextNode(expType.getName()));
-                    additionalFields.appendChild(refExpType);
-                }
-            } else {
-                Element refExpType = document.createElement("field");
-                refExpType.setAttribute("name", "technology_type");
-                refExpType.appendChild(document.createTextNode(DEFAULT_EXPERIMENT_TYPE));
-                additionalFields.appendChild(refExpType);
-            }
+//            //Add information about experiment type
+//            if (project.getExperimentTypes()!=null && project.getExperimentTypes().size()>0) {
+//                for (CvParam expType : project.getExperimentTypes()) {
+//                    Element refExpType = document.createElement("field");
+//                    refExpType.setAttribute("name", "technology_type");
+//                    refExpType.appendChild(document.createTextNode(expType.getName()));
+//                    additionalFields.appendChild(refExpType);
+//                }
+//            } else {
+//                Element refExpType = document.createElement("field");
+//                refExpType.setAttribute("name", "technology_type");
+//                refExpType.appendChild(document.createTextNode(DEFAULT_EXPERIMENT_TYPE));
+//                additionalFields.appendChild(refExpType);
+//            }
 
             //Add curator tags and keywords
             if (project.getProjectTags()!=null && project.getProjectTags().size()>0) {
@@ -356,63 +297,15 @@ public class WriterEBeyeXML {
                 }
             }
 
-            if (project.getKeywords()!=null && !project.getKeywords().isEmpty()) {
-                for(String keyword: project.getKeywords()){
-                    Element keywords = document.createElement("field");
-                    keywords.setAttribute("name", "submitter_keywords");
-                    keywords.appendChild(document.createTextNode(keyword));
-                    additionalFields.appendChild(keywords);
-                }
-            }
+//            if (project.getKeywords()!=null && !project.getKeywords().isEmpty()) {
+//                for(String keyword: project.getKeywords()){
+//                    Element keywords = document.createElement("field");
+//                    keywords.setAttribute("name", "submitter_keywords");
+//                    keywords.appendChild(document.createTextNode(keyword));
+//                    additionalFields.appendChild(keywords);
+//                }
+//            }
 
-            //Specific to proteomics field the quantitation method
-            if (project.getQuantificationMethods()!=null && project.getQuantificationMethods().size()>0) {
-                for (CvParam quantMethod : project.getQuantificationMethods()) {
-                    Element refQuantMethod = document.createElement("field");
-                    refQuantMethod.setAttribute("name", "quantification_method");
-                    refQuantMethod.appendChild(document.createTextNode(quantMethod.getName()));
-                    additionalFields.appendChild(refQuantMethod);
-                }
-            } else {
-                Element quantMethod = document.createElement("field");
-                quantMethod.setAttribute("name", "quantification_method");
-                quantMethod.appendChild(document.createTextNode(NOT_AVAILABLE));
-                additionalFields.appendChild(quantMethod);
-            }
-
-            if (project.getSoftware()!=null && project.getSoftware().size()>0) {
-                for (CvParam software : project.getSoftware()) {
-                    Element refSoftware = document.createElement("field");
-                    refSoftware.setAttribute("name", "software");
-                    refSoftware.appendChild(document.createTextNode(software.getValue()));
-                    additionalFields.appendChild(refSoftware);
-                }
-            } else {
-                Element refSoftware = document.createElement("field");
-                refSoftware.setAttribute("name", "software");
-                refSoftware.appendChild(document.createTextNode(NOT_AVAILABLE));
-                additionalFields.appendChild(refSoftware);
-            }
-
-            //Add publication related information
-            if (project.getDoi()!=null && !project.getDoi().isEmpty()) {
-                Element doi = document.createElement("field");
-                doi.setAttribute("name", "doi");
-                doi.appendChild(document.createTextNode(project.getDoi()));
-                additionalFields.appendChild(doi);
-            }
-
-            //Add publication related information
-            if (project.getReferences()!=null && project.getReferences().size()>0) {
-                for (Reference reference : project.getReferences()) {
-                    if(reference.getReferenceLine() != null){
-                        Element refPubMedLine = document.createElement("field");
-                        refPubMedLine.setAttribute("name", "publication");
-                        refPubMedLine.appendChild(document.createTextNode(reference.getReferenceLine()));
-                        additionalFields.appendChild(refPubMedLine);
-                    }
-                }
-            }
 
             //Add submitter information
             if(project.getSubmitter() != null){
@@ -436,41 +329,6 @@ public class WriterEBeyeXML {
                 }
             }
 
-            //Add LabHead information
-            if(project.getLabHeads() != null && !project.getLabHeads().isEmpty()){
-                for(Submitter labhead: project.getLabHeads()){
-                    if(labhead.getName() != null){
-                        Element submitter = document.createElement("field");
-                        submitter.setAttribute("name", "labhead");
-                        submitter.appendChild(document.createTextNode(labhead.getName()));
-                        additionalFields.appendChild(submitter);
-                    }
-                    if(labhead.getEmail() != null){
-                        Element submitterMail = document.createElement("field");
-                        submitterMail.setAttribute("name", "labhead_mail");
-                        submitterMail.appendChild(document.createTextNode(labhead.getEmail()));
-                        additionalFields.appendChild(submitterMail);
-                    }
-                    if(labhead.getAffiliation() != null){
-                        Element submitterAffiliation = document.createElement("field");
-                        submitterAffiliation.setAttribute("name", "labhead_affiliation");
-                        submitterAffiliation.appendChild(document.createTextNode(labhead.getAffiliation()));
-                        additionalFields.appendChild(submitterAffiliation);
-                    }
-
-                }
-            }
-
-            //Add original link to the files
-            if(project.getDataFiles() != null && !project.getDataFiles().isEmpty()){
-                for(String file: project.getDataFiles()){
-                    Element dataset_link = document.createElement("field");
-                    dataset_link.setAttribute("name", "dataset_file");
-                    dataset_link.appendChild(document.createTextNode(file));
-                    additionalFields.appendChild(dataset_link);
-                }
-            }
-
             entries.appendChild(entry);
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -482,7 +340,7 @@ public class WriterEBeyeXML {
             File outputXML = new File(outputDirectory, project.getRepositoryName().trim() + "_EBEYE_" + project.getAccession() + ".xml");
             StreamResult result = new StreamResult(outputXML.toURI().getPath());
             transformer.transform(source, result);
-            logger.info("Finished generating EB-eye XML file for: " + outputDirectory + File.separator + "PX_EBEYE_" + project.getAccession() + ".xml" );
+            logger.info("Finished generating EB-eye XML file for: " + outputDirectory + File.separator + "MW_EBEYE_" + project.getAccession() + ".xml" );
         }
 
     }

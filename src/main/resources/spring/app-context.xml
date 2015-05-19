@@ -10,26 +10,7 @@
     <bean id="taxWsConfig" class="uk.ac.ebi.ddi.reader.extws.entrez.config.TaxWsConfigProd">
     </bean>
 
-    <bean id="restTemplate" name="restTemplate" class="org.springframework.web.client.RestTemplate">
-        <property name="messageConverters">
-            <list>
-                <bean id="jsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-                    <property name="supportedMediaTypes">
-                        <list>
-                            <bean id="jsonMediaTypeTextPlain" class="org.springframework.http.MediaType">
-                                <constructor-arg value="text"/>
-                                <constructor-arg value="plain"/>
-                            </bean>
-                            <bean id="jsonMediaTypeApplicationJson" class="org.springframework.http.MediaType">
-                                <constructor-arg value="application"/>
-                                <constructor-arg value="json"/>
-                            </bean>
-                        </list>
-                    </property>
-                </bean>
-            </list>
-        </property>
-    </bean>
+
 
 
 </beans>

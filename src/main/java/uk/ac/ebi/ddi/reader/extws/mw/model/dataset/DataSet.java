@@ -137,4 +137,8 @@ public class DataSet {
     public String getTaxonomy() {
         return taxonomy;
     }
+
+    public void setTaxonomy(String taxonomy) {
+        this.taxonomy = taxonomy;
+    }
 }

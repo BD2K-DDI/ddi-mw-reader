@@ -5,6 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import uk.ac.ebi.ddi.reader.extws.entrez.client.taxonomy.TaxonomyWsClient;
+import uk.ac.ebi.ddi.reader.extws.entrez.config.TaxWsConfigProd;
+import uk.ac.ebi.ddi.reader.extws.entrez.ncbiresult.NCBITaxResult;
 import uk.ac.ebi.ddi.reader.extws.mw.client.dataset.DatasetWsClient;
 
 import uk.ac.ebi.ddi.reader.extws.mw.config.MWWsConfigProd;
@@ -50,9 +53,12 @@ public class GenerateMWEbeFiles {
 
         ApplicationContext ctx = new ClassPathXmlApplicationContext("spring/app-context.xml");
         MWWsConfigProd mwWsConfigProd = (MWWsConfigProd) ctx.getBean("mwWsConfig");
+        TaxWsConfigProd taxWsConfigProd = (TaxWsConfigProd) ctx.getBean("taxWsConfig");
 
         try {
             DatasetWsClient datasetWsClient = new DatasetWsClient(mwWsConfigProd);
+
+            TaxonomyWsClient taxonomyWsClient = new TaxonomyWsClient(taxWsConfigProd);
 
             //RestTemplate rest = (RestTemplate) ctx.getBean("restTemplate");
 
@@ -71,10 +77,18 @@ public class GenerateMWEbeFiles {
                     if(metabolites != null && metabolites.metabolites != null && metabolites.metabolites.size() > 0)
                         metabolites = datasetWsClient.updateChebiId(metabolites);
 
+                    if(dataset != null && dataset.getSubject_species() != null){
+                        NCBITaxResult texId = taxonomyWsClient.getNCBITax(dataset.getSubject_species());
+                        if(texId != null &&
+                                texId.getNCBITaxonomy() != null &&
+                                texId.getNCBITaxonomy().length > 0 &&
+                                texId.getNCBITaxonomy()[0] != null)
+                            dataset.setTaxonomy(texId.getNCBITaxonomy()[0]);
+                    }
                     System.out.println(metabolites);
                     Project proj = ReaderMWProject.readProject(dataset, analysis, metabolites, factorList);
-                   // WriterEBeyeXML writer = new WriterEBeyeXML(proj, new File(outputFolder), null);
-                   //   writer.generate();
+                    WriterEBeyeXML writer = new WriterEBeyeXML(proj, new File(outputFolder), null);
+                    writer.generate();
                 }
             }
         } catch (Exception e) {
