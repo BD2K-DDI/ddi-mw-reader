@@ -2,24 +2,24 @@ package uk.ac.ebi.ddi.reader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import uk.ac.ebi.ddi.reader.extws.mw.client.dataset.DatasetWsClient;
-import uk.ac.ebi.ddi.reader.extws.mw.config.AbstractMWWsConfig;
+
 import uk.ac.ebi.ddi.reader.extws.mw.config.MWWsConfigProd;
+import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.Analysis;
 import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.DataSet;
 import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.DatasetList;
+import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.MetaboliteList;
 import uk.ac.ebi.ddi.reader.model.Project;
-import uk.ac.ebi.ddi.reader.utils.ReadProperties;
+
+import uk.ac.ebi.ddi.reader.utils.ReaderMWProject;
 import uk.ac.ebi.ddi.reader.utils.WriterEBeyeXML;
 
-import java.io.BufferedReader;
+
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
 import java.util.HashMap;
 
 
@@ -30,11 +30,6 @@ import java.util.HashMap;
  */
 
 public class GenerateMWEbeFiles {
-
-    static AbstractMWWsConfig mwWsConfig = new MWWsConfigProd();
-
-    public static DatasetWsClient datasetWsClient;
-
 
     private static HashMap<String, String> pageBuffer = new HashMap<String, String>();
 
@@ -56,17 +51,31 @@ public class GenerateMWEbeFiles {
             System.exit(-1);
         }
 
-        try {
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("spring/app-context.xml");
+        MWWsConfigProd mwWsConfigProd = (MWWsConfigProd) ctx.getBean("mwWsConfig");
 
-            datasetWsClient = new DatasetWsClient(mwWsConfig);
+        try {
+            DatasetWsClient datasetWsClient = new DatasetWsClient(mwWsConfigProd);
+
+            //RestTemplate rest = (RestTemplate) ctx.getBean("restTemplate");
 
             DatasetList datasets = datasetWsClient.getAllDatasets();
 
             if (datasets != null && datasets.datasets != null) {
                 for (DataSet dataset : datasets.datasets.values()) {
-                    Project proj = null;
-                    WriterEBeyeXML writer = new WriterEBeyeXML(proj, new File(outputFolder), null);
-                    writer.generate();
+                    Analysis analysis = null;
+                    MetaboliteList metabolites = null;
+                    if(dataset != null && dataset.getId() != null){
+                        analysis = datasetWsClient.getAnalysisInformantion(dataset.getId());
+                        metabolites = datasetWsClient.getMataboliteList(dataset.getId());
+                    }
+                    if(metabolites != null && metabolites.metabolites != null && metabolites.metabolites.size() > 0)
+                        metabolites = datasetWsClient.updateChebiId(metabolites);
+
+                    System.out.println(metabolites);
+                    Project proj = ReaderMWProject.readProject(dataset, analysis, metabolites);
+                   // WriterEBeyeXML writer = new WriterEBeyeXML(proj, new File(outputFolder), null);
+                   //   writer.generate();
                 }
             }
         } catch (Exception e) {

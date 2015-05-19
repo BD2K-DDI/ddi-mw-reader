@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.Analysis;
+import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.DataSet;
+import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.MetaboliteList;
 import uk.ac.ebi.ddi.reader.model.CvParam;
 import uk.ac.ebi.ddi.reader.model.Project;
 import uk.ac.ebi.ddi.reader.model.Reference;
@@ -30,27 +33,24 @@ import java.util.List;
  * Reader using SAX the XML file
  * @author ypriverol
  */
-public class ReaderPxXML {
+public class ReaderMWProject {
 
-//    private static final Logger logger = LoggerFactory.getLogger(ReaderPxXML.class);
-//
-//    /**
-//     * This method read the PX summary file and return a project structure to be use by the
-//     * EBE exporter.
-//     * @param page PX XML file
-//     * @return Project object model
-//     */
-//    public static Project readProject(String page) throws Exception {
-//
-//        Project project = null;
-//
-//        if(page != null)
-//            project = parseDocument(page);
-//
-//        return project;
-//    }
-//
-//
+    private static final Logger logger = LoggerFactory.getLogger(ReaderMWProject.class);
+
+    /**
+     * This method read the PX summary file and return a project structure to be use by the
+     * EBE exporter.
+     * @return Project object model
+     */
+    public static Project readProject(DataSet dataset, Analysis analysis, MetaboliteList metabolities) throws Exception {
+
+        Project project = null;
+
+
+        return project;
+    }
+
+
 //    /**
 //     * Get a document from an String page.
 //     * @param xml XML as string

@@ -1,5 +1,6 @@
 package uk.ac.ebi.ddi.reader.extws.mw.client;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.ddi.reader.extws.mw.config.AbstractMWWsConfig;
 
@@ -11,6 +12,7 @@ import uk.ac.ebi.ddi.reader.extws.mw.config.AbstractMWWsConfig;
 public class MWClient {
 
     protected RestTemplate restTemplate;
+
     protected AbstractMWWsConfig config;
 
     /**

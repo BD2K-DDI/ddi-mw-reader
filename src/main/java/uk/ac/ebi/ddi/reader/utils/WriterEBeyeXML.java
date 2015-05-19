@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.DataSet;
 import uk.ac.ebi.ddi.reader.model.CvParam;
 import uk.ac.ebi.ddi.reader.model.Project;
 import uk.ac.ebi.ddi.reader.model.Reference;
@@ -44,18 +45,18 @@ public class WriterEBeyeXML {
 
     private File outputDirectory;
 
-    private Map<String, String> proteins;
+    private Map<String, String> metabolites;
 
     /**
      * Constructor.
      *
-     * @param project   (required) public project to be used for generating the EB-eye XML.
+     * @param proj  (required) public project to be used for generating the EB-eye XML.
      * @param outputDirectory   (required) target output directory.
      */
-    public WriterEBeyeXML(Project project, File outputDirectory, Map<String, String> proteins) {
-        this.project = project;
+    public WriterEBeyeXML(Project proj, File outputDirectory, Map<String, String> metabolites) {
+        this.project = proj;
         this.outputDirectory = outputDirectory;
-        this.proteins = (proteins == null)? new HashMap<String,String>():proteins;
+        this.metabolites = (metabolites == null)? new HashMap<String,String>(): metabolites;
     }
 
     /**
@@ -151,11 +152,11 @@ public class WriterEBeyeXML {
                 }
             }
 
-            if (proteins!=null && !proteins.isEmpty()) {
-                for (String protein : proteins.keySet()) {
+            if (metabolites !=null && !metabolites.isEmpty()) {
+                for (String protein : metabolites.keySet()) {
                     Element refProtein = document.createElement("ref");
                     refProtein.setAttribute("dbkey", protein);
-                    refProtein.setAttribute("dbname", proteins.get(protein));
+                    refProtein.setAttribute("dbname", metabolites.get(protein));
                     crossReferences.appendChild(refProtein);
                 }
             }
