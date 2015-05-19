@@ -18,11 +18,7 @@ public class Project {
 
     private String projectDescription;
 
-    private List<CvParam> species;
-
-    private List<String>  taxonomies;
-
-    private List<Reference> references;
+    private Specie specie;
 
     private Date submissionDate;
 
@@ -32,54 +28,22 @@ public class Project {
 
     private String dataProcessingProtocol;
 
-    private List<CvParam> instruments;
+    private Instrument instrument;
 
-    private List<CvParam> cellTypes;
-
-    private List<CvParam> diseases;
-
-    private List<CvParam> tissues;
-
-    private List<CvParam> ptms;
-
-    private List<CvParam> experimentTypes;
+    private List<String> experimentTypes;
 
     private List<String> projectTags;
 
-    private List<String> keywords;
-
-    private List<CvParam> quantificationMethods;
-
-    private List<CvParam> software;
-
-    private String doi;
-
     private Submitter submitter;
 
-    private List<Submitter> labHeads;
-
-    private List<String> dataFiles;
     private String datasetLink;
 
     /**
      * Default constructor create a List of every list-based attribute
      */
     public Project() {
-        dataFiles             = Collections.emptyList();
-        labHeads              = Collections.emptyList();
-        software              = Collections.emptyList();
-        quantificationMethods = Collections.emptyList();;
         projectTags           = Collections.emptyList();
         experimentTypes       = Collections.emptyList();
-        ptms                  = Collections.emptyList();
-        tissues               = Collections.emptyList();
-        diseases              = Collections.emptyList();
-        cellTypes             = Collections.emptyList();
-        instruments           = Collections.emptyList();
-        references            = Collections.emptyList();
-        taxonomies            = Collections.emptyList();
-        species               = Collections.emptyList();
-
     }
 
     public boolean isPublicProject() {
@@ -102,16 +66,8 @@ public class Project {
         return projectDescription;
     }
 
-    public List<CvParam> getSpecies() {
-        return species;
-    }
-
-    public List<String> getTaxonomies() {
-        return taxonomies;
-    }
-
-    public List<Reference> getReferences() {
-        return references;
+    public Specie getSpecie() {
+        return specie;
     }
 
     public Date getSubmissionDate() {
@@ -130,27 +86,11 @@ public class Project {
         return dataProcessingProtocol;
     }
 
-    public List<CvParam> getInstruments() {
-        return instruments;
+    public Instrument getInstruments() {
+        return instrument;
     }
 
-    public List<CvParam> getCellTypes() {
-        return cellTypes;
-    }
-
-    public List<CvParam> getDiseases() {
-        return diseases;
-    }
-
-    public List<CvParam> getTissues() {
-        return tissues;
-    }
-
-    public List<CvParam> getPtms() {
-        return ptms;
-    }
-
-    public List<CvParam> getExperimentTypes() {
+    public List<String> getExperimentTypes() {
         return experimentTypes;
     }
 
@@ -158,32 +98,8 @@ public class Project {
         return projectTags;
     }
 
-    public List<String> getKeywords() {
-        return keywords;
-    }
-
-    public List<CvParam> getQuantificationMethods() {
-        return quantificationMethods;
-    }
-
-    public List<CvParam> getSoftware() {
-        return software;
-    }
-
-    public String getDoi() {
-        return doi;
-    }
-
     public Submitter getSubmitter() {
         return submitter;
-    }
-
-    public List<Submitter> getLabHeads() {
-        return labHeads;
-    }
-
-    public List<String> getDataFiles() {
-        return dataFiles;
     }
 
     public void setAccession(String accession) {
@@ -202,16 +118,8 @@ public class Project {
         this.projectDescription = projectDescription;
     }
 
-    public void setSpecies(List<CvParam> species) {
-        this.species = species;
-    }
-
-    public void setTaxonomies(List<String> taxonomies) {
-        this.taxonomies = taxonomies;
-    }
-
-    public void setReferences(List<Reference> references) {
-        this.references = references;
+    public void setSpecie(Specie specie) {
+        this.specie = specie;
     }
 
     public void setSubmissionDate(Date submissionDate) {
@@ -230,27 +138,11 @@ public class Project {
         this.dataProcessingProtocol = dataProcessingProtocol;
     }
 
-    public void setInstruments(List<CvParam> instruments) {
-        this.instruments = instruments;
+    public void setInstrument(Instrument instrument) {
+        this.instrument = instrument;
     }
 
-    public void setCellTypes(List<CvParam> cellTypes) {
-        this.cellTypes = cellTypes;
-    }
-
-    public void setDiseases(List<CvParam> diseases) {
-        this.diseases = diseases;
-    }
-
-    public void setTissues(List<CvParam> tissues) {
-        this.tissues = tissues;
-    }
-
-    public void setPtms(List<CvParam> ptms) {
-        this.ptms = ptms;
-    }
-
-    public void setExperimentTypes(List<CvParam> experimentTypes) {
+    public void setExperimentTypes(List<String> experimentTypes) {
         this.experimentTypes = experimentTypes;
     }
 
@@ -258,32 +150,8 @@ public class Project {
         this.projectTags = projectTags;
     }
 
-    public void setKeywords(List<String> keywords) {
-        this.keywords = keywords;
-    }
-
-    public void setQuantificationMethods(List<CvParam> quantificationMethods) {
-        this.quantificationMethods = quantificationMethods;
-    }
-
-    public void setSoftware(List<CvParam> software) {
-        this.software = software;
-    }
-
-    public void setDoi(String doi) {
-        this.doi = doi;
-    }
-
     public void setSubmitter(Submitter submitter) {
         this.submitter = submitter;
-    }
-
-    public void setLabHeads(List<Submitter> labHeads) {
-        this.labHeads = labHeads;
-    }
-
-    public void setDataFiles(List<String> dataFiles) {
-        this.dataFiles = dataFiles;
     }
 
     public void addCuratorKey(String reviewLevel) {

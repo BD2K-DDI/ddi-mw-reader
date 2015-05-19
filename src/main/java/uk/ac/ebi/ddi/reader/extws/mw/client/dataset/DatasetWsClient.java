@@ -85,6 +85,11 @@ public class DatasetWsClient extends MWClient{
         return id;
     }
 
+    /**
+     * Return the list of metaboligths identified in the current experiment
+     * @param metabolites
+     * @return
+     */
     public MetaboliteList updateChebiId(MetaboliteList metabolites){
         if(metabolites != null && metabolites.metabolites != null && metabolites.metabolites.size() > 0){
             System.out.println(metabolites.metabolites.size());
@@ -100,6 +105,25 @@ public class DatasetWsClient extends MWClient{
             }
         }
         return metabolites;
+    }
+
+    /**
+     * Return Experiment Factors
+     * @param id
+     * @return List of Experiment Factors
+     */
+    public FactorList getFactorList(String id){
+
+        String url = String.format("%s://%s/rest/study/study_id/%s/factors",
+                config.getProtocol(), config.getHostName(), id);
+
+        FactorList factorList = null;
+        try{
+            factorList = this.restTemplate.getForObject(url, FactorList.class);
+        }catch(Exception e){
+            logger.debug(e.getLocalizedMessage());
+        }
+        return factorList;
     }
 
 

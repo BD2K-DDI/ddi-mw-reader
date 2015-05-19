@@ -8,11 +8,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.Analysis;
 import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.DataSet;
+import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.FactorList;
 import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.MetaboliteList;
-import uk.ac.ebi.ddi.reader.model.CvParam;
-import uk.ac.ebi.ddi.reader.model.Project;
-import uk.ac.ebi.ddi.reader.model.Reference;
-import uk.ac.ebi.ddi.reader.model.Submitter;
+import uk.ac.ebi.ddi.reader.model.*;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -37,122 +35,62 @@ public class ReaderMWProject {
 
     private static final Logger logger = LoggerFactory.getLogger(ReaderMWProject.class);
 
+    private static final String METABOLOME_REPOSITORY = "Metabolomics Workbench";
+
+    private static final String METABOLOMEWORKBENCH_LINK = "http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=";
+
     /**
      * This method read the PX summary file and return a project structure to be use by the
      * EBE exporter.
      * @return Project object model
      */
-    public static Project readProject(DataSet dataset, Analysis analysis, MetaboliteList metabolities) throws Exception {
+    public static Project readProject(DataSet dataset,
+                                      Analysis analysis,
+                                      MetaboliteList metabolities,
+                                      FactorList factorList) throws Exception {
+          Project proj = new Project();
 
-        Project project = null;
+          proj.setAccession(dataset.getId());
+        
+          proj.setRepositoryName(METABOLOME_REPOSITORY);
 
+          proj.setTitle(dataset.getTitle());
 
-        return project;
-    }
+          proj.setProjectDescription(dataset.getDescription());
 
+          proj.setInstrument(transformInstrument(analysis));
 
-//    /**
-//     * Get a document from an String page.
-//     * @param xml XML as string
-//     * @return the Document
-//     */
-//    private static Document getDomElement(String xml){
-//        Document doc = null;
-//        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-//        try {
+          proj.setSpecie(transformSpecie(dataset));
+
+          proj.setSubmitter(transformSubmitter(dataset));
 //
-//            DocumentBuilder db = dbf.newDocumentBuilder();
-//
-//            InputSource is = new InputSource();
-//            is.setCharacterStream(new StringReader(xml));
-//            doc = db.parse(is);
-//
-//        } catch (ParserConfigurationException e) {
-//            logger.error("Error: ", e.getMessage());
-//            return null;
-//        } catch (SAXException e) {
-//            logger.error("Error: ", e.getMessage());
-//            return null;
-//        } catch (IOException e) {
-//            logger.error("Error: ", e.getMessage());
-//            return null;
-//        }
-//        // return DOM
-//        return doc;
-//    }
-//
-//    /**
-//     * Parse the XML JAXB file into a Prject data model. It allows to map the information in the common
-//     * data model for exporting.
-//     * @param page the JAXB XML object
-//     * @return  Project the project
-//     * @throws IOException
-//     * @throws JAXBException
-//     */
-//    public static Project parseDocument(String page) throws IOException, JAXBException {
-//
-//        Project proj = new Project();
-//
-//        InputStream in = org.apache.commons.io.IOUtils.toInputStream(page, "UTF-8");
-//        PxReader reader = new PxReader(in);
-//
-//       //Set accession
-//        proj.setAccession(reader.getAccession());
-//
-//        //Set repository Name
-//        proj.setRepositoryName(reader.getRepositoryName());
-//
-//        //Set title of the dataset
-//        proj.setTitle(reader.getTitle());
-//
-//        //Set Project Description
-//        proj.setProjectDescription(reader.getDescription());
-//
-//        //Set Instrument
-//        proj.setInstruments(transformInstruments(reader.getInstruments()));
-//
-//        //Set Modifications
-//        proj.setPtms(transformCVParamTypeList(reader.getPtms()));
-//
-//        //Set Species
-//        proj.setSpecies(transformSpecies(reader.getSpecies()));
-//
-//        //Set Taxonomies
-//        proj.setTaxonomies(transformTaxonomies(reader.getSpecies()));
-//
-//        //Set Submitter
-//        proj.setSubmitter(selectSubmitterFromContacts(reader.getContactList()));
-//
-//        //Set Lab heads
-//        proj.setLabHeads(selectLabHeadsFromContacts(reader.getContactList()));
-//
-//        //Set Publication date
-//        proj.setPublicationDate(transformDate(reader.getAnnounceDate()));
-//
-//        //Set Data Files
-//        proj.setDataFiles(transformDataFiles(reader.getDataFiles()));
-//
-//        //Set Submitter keywords
-//        proj.setKeywords(transformSubmitterKeywords(reader.getSubmitterKeywords()));
-//
-//        //Set Curator Keywords
-//        proj.setProjectTags(transformCuratorKeywords(reader.getSubmitterKeywords()));
-//        proj.addCuratorKey(reader.getReviewLevel());
 //
 //        //Set DatasetLink
-//        proj.setDatasetLink(transformGetDatasetLink(reader.getFullDatasetLink()));
-//        if(proj.getDatasetLink() == null)
-//            proj.setDatasetLink(Constants.PXURL+proj.getAccession());
-//
-//        //Set the experiment Types
-//        proj.setExperimentTypes(transformExperimentTypes(reader.getSubmitterKeywords()));
-//
-//        proj.setReferences(transformReferences(reader.getReferences()));
-//
-//        return proj;
-//
-//    }
-//
+          proj.setDatasetLink(METABOLOMEWORKBENCH_LINK + proj.getAccession());
+
+          return proj;
+    }
+
+    private static Specie transformSpecie(DataSet dataset) {
+        Specie specie = null;
+        if(dataset != null)
+            specie = new Specie(dataset.getSubject_species(), dataset.getTaxonomy());
+        return specie;
+    }
+
+    private static Submitter transformSubmitter(DataSet dataset) {
+        Submitter submitter = null;
+        if(dataset != null && dataset.getFirstname() != null){
+            submitter = new Submitter();
+            submitter.setFirstName(dataset.getFirstname());
+            submitter.setLastName(dataset.getLast_name());
+            submitter.setEmail(dataset.getEmail());
+            submitter.setAffiliation(dataset.getDepartment(), dataset.getInstitute());
+        }
+        return submitter;
+    }
+
+    //
 //    /**
 //     * Set references for the Project
 //     * @param references
@@ -365,15 +303,12 @@ public class ReaderMWProject {
 //     * @param instruments List of instruments from PX submission
 //     * @return List of CvParams
 //     */
-//    private static List<CvParam> transformInstruments(List<InstrumentType> instruments) {
-//        List<CvParam> cvParams = new ArrayList<CvParam>();
-//        if(instruments != null && instruments.size() >0){
-//            for(InstrumentType instrument: instruments){
-//               cvParams.addAll(transformCVParamTypeList(instrument.getCvParam()));
-//            }
-//        }
-//        return cvParams;
-//    }
+    private static Instrument transformInstrument(Analysis analysis) {
+        Instrument instrument = null;
+        if(analysis != null)
+             instrument = new Instrument(analysis.getInstrument_type(), analysis.getInstrument_name());
+        return instrument;
+    }
 //
 //    /**
 //     * Convert List of CVParamsType to CVparams in the model

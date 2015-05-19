@@ -49,6 +49,18 @@ public class Submitter {
         this.affiliation = affiliation;
     }
 
+    public void setAffiliation(String department, String institute){
+        this.affiliation = "";
+        if(department != null && department.length() > 0)
+            this.affiliation += department;
+        if(institute != null && institute.length() > 0){
+            if(this.affiliation.length() > 0)
+               this.affiliation += ", " + institute;
+            else
+                this.affiliation += institute;
+        }
+    }
+
     public String getName(){
         String name = firstName;
         if(lastName != null && lastName.length() > 0){

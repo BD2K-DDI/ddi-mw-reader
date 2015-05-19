@@ -8,10 +8,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import uk.ac.ebi.ddi.reader.extws.mw.client.dataset.DatasetWsClient;
 
 import uk.ac.ebi.ddi.reader.extws.mw.config.MWWsConfigProd;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.Analysis;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.DataSet;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.DatasetList;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.MetaboliteList;
+import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.*;
 import uk.ac.ebi.ddi.reader.model.Project;
 
 import uk.ac.ebi.ddi.reader.utils.ReaderMWProject;
@@ -65,15 +62,17 @@ public class GenerateMWEbeFiles {
                 for (DataSet dataset : datasets.datasets.values()) {
                     Analysis analysis = null;
                     MetaboliteList metabolites = null;
+                    FactorList factorList = null;
                     if(dataset != null && dataset.getId() != null){
                         analysis = datasetWsClient.getAnalysisInformantion(dataset.getId());
                         metabolites = datasetWsClient.getMataboliteList(dataset.getId());
+                        factorList = datasetWsClient.getFactorList(dataset.getId());
                     }
                     if(metabolites != null && metabolites.metabolites != null && metabolites.metabolites.size() > 0)
                         metabolites = datasetWsClient.updateChebiId(metabolites);
 
                     System.out.println(metabolites);
-                    Project proj = ReaderMWProject.readProject(dataset, analysis, metabolites);
+                    Project proj = ReaderMWProject.readProject(dataset, analysis, metabolites, factorList);
                    // WriterEBeyeXML writer = new WriterEBeyeXML(proj, new File(outputFolder), null);
                    //   writer.generate();
                 }

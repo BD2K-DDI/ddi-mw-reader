@@ -44,6 +44,7 @@ public class DataSet {
 
     @JsonProperty("subject_species")
     String subject_species;
+    private String taxonomy;
 
     public String getId() {
         return id;
@@ -131,5 +132,9 @@ public class DataSet {
 
     public void setSubject_species(String subject_species) {
         this.subject_species = subject_species;
+    }
+
+    public String getTaxonomy() {
+        return taxonomy;
     }
 }
