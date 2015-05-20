@@ -1,4 +1,4 @@
-package uk.ac.ebi.ddi.reader.extws.mw.client.dataset;
+package uk.ac.ebi.ddi.reader.extws.mw.client;
 
 import junit.framework.Assert;
 import org.junit.Before;
@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.DatasetList;
+import uk.ac.ebi.ddi.reader.extws.mw.model.DatasetList;
 import uk.ac.ebi.ddi.reader.extws.mw.config.AbstractMWWsConfig;
 
 @ContextConfiguration(locations = {"/test-context.xml"})

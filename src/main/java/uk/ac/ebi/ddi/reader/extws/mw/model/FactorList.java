@@ -1,4 +1,4 @@
-package uk.ac.ebi.ddi.reader.extws.mw.model.dataset;
+package uk.ac.ebi.ddi.reader.extws.mw.model;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -9,26 +9,27 @@ import java.util.Map;
 
 /**
  * @author Yasset Perez-Riverol (ypriverol@gmail.com)
- * @date 18/05/2015
+ * @date 19/05/2015
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 
-public class DatasetList {
+public class FactorList {
 
-    public Map<String, DataSet> datasets = new HashMap<String, DataSet>();
+    public Map<String, Factor> factors = new HashMap<String, Factor>();
 
     @JsonAnyGetter
-    public Map<String, DataSet> any() {
-        return datasets;
+    public Map<String, Factor> any() {
+        return factors;
     }
 
     @JsonAnySetter
-    public void set(String name, DataSet value) {
-        datasets.put(name, value);
+    public void set(String name, Factor value) {
+        factors.put(name, value);
     }
 
     public boolean hasUnknowProperties() {
-        return !datasets.isEmpty();
+        return !factors.isEmpty();
     }
+
 
 }

@@ -1,7 +1,7 @@
 package uk.ac.ebi.ddi.reader.model;
 
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.Metabolite;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.MetaboliteList;
+import uk.ac.ebi.ddi.reader.extws.mw.model.Metabolite;
+import uk.ac.ebi.ddi.reader.extws.mw.model.MetaboliteList;
 
 import java.util.*;
 
@@ -23,13 +23,9 @@ public class Project {
 
     private Date submissionDate;
 
-    private Date publicationDate;
+    private List<String> dataProcessingProtocol;
 
-    private String sampleProcessingProtocol;
-
-    private String dataProcessingProtocol;
-
-    private Instrument instrument;
+    private Set<Instrument> instrument;
 
     private List<String> experimentTypes;
 
@@ -78,15 +74,7 @@ public class Project {
         return submissionDate;
     }
 
-    public Date getPublicationDate() {
-        return publicationDate;
-    }
-
-    public String getSampleProcessingProtocol() {
-        return sampleProcessingProtocol;
-    }
-
-    public String getDataProcessingProtocol() {
+    public List<String> getDataProcessingProtocol() {
         return dataProcessingProtocol;
     }
 
@@ -126,19 +114,11 @@ public class Project {
         this.submissionDate = submissionDate;
     }
 
-    public void setPublicationDate(Date publicationDate) {
-        this.publicationDate = publicationDate;
-    }
-
-    public void setSampleProcessingProtocol(String sampleProcessingProtocol) {
-        this.sampleProcessingProtocol = sampleProcessingProtocol;
-    }
-
-    public void setDataProcessingProtocol(String dataProcessingProtocol) {
+    public void setDataProcessingProtocol(List<String> dataProcessingProtocol) {
         this.dataProcessingProtocol = dataProcessingProtocol;
     }
 
-    public void setInstrument(Instrument instrument) {
+    public void setInstrument(Set<Instrument> instrument) {
         this.instrument = instrument;
     }
 
@@ -146,17 +126,8 @@ public class Project {
         this.experimentTypes = experimentTypes;
     }
 
-    public void setProjectTags(List<String> projectTags) {
-        this.projectTags = projectTags;
-    }
-
     public void setSubmitter(Submitter submitter) {
         this.submitter = submitter;
-    }
-
-    public void addCuratorKey(String reviewLevel) {
-        if(reviewLevel != null)
-            projectTags.add(reviewLevel);
     }
 
     public String getDatasetLink() {
@@ -167,7 +138,7 @@ public class Project {
         this.datasetLink = datasetLink;
     }
 
-    public Instrument getInstrument() {
+    public Set<Instrument> getInstrument() {
         return instrument;
     }
 

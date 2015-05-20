@@ -2,7 +2,7 @@ package uk.ac.ebi.ddi.reader.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.*;
+import uk.ac.ebi.ddi.reader.extws.mw.model.*;
 import uk.ac.ebi.ddi.reader.model.*;
 
 import java.text.DateFormat;
@@ -29,7 +29,7 @@ public class ReaderMWProject {
      * @return Project object model
      */
     public static Project readProject(DataSet dataset,
-                                      Analysis analysis,
+                                      AnalysisList analysis,
                                       MetaboliteList metabolites,
                                       FactorList factorList) throws Exception {
         Project proj = new Project();
@@ -52,15 +52,25 @@ public class ReaderMWProject {
 
         proj.setDatasetLink(METABOLOMEWORKBENCH_LINK + proj.getAccession());
 
-        proj.setExperimentTypes(transformExperimentTypes(analysis.getType()));
+        proj.setExperimentTypes(transformExperimentTypes(analysis));
 
         proj.setFactors(transformFactors(factorList));
 
         proj.setSubmissionDate(transformDate(dataset.getSubmit_date()));
 
-        proj.setDataProcessingProtocol(analysis.getSummary());
+        proj.setDataProcessingProtocol(transformDataProcessing(analysis));
 
         return proj;
+    }
+
+    private static List<String> transformDataProcessing(AnalysisList analysisList) {
+        Set<String> experimentTypes = new HashSet<String>();
+        if(analysisList != null && analysisList.analysisMap != null && analysisList.analysisMap.size() > 0){
+            for(Analysis analysis: analysisList.analysisMap.values()){
+               experimentTypes.add(analysis.getSummary());
+            }
+        }
+        return new ArrayList<String>(experimentTypes);
     }
 
     private static Date transformDate(String submit_date) {
@@ -93,13 +103,17 @@ public class ReaderMWProject {
         return submitter;
     }
 
-    private static List<String> transformExperimentTypes(String type) {
-        String mapTerm = Synonyms.getTermBySynonym(type);
-        if(mapTerm == null)
-            mapTerm = type;
-        List<String> experimentTypes = new ArrayList<String>();
-        experimentTypes.add(mapTerm);
-        return experimentTypes;
+    private static List<String> transformExperimentTypes(AnalysisList analysisList) {
+        Set<String> experimentTypes = new HashSet<String>();
+        if(analysisList != null && analysisList.analysisMap != null && analysisList.analysisMap.size() > 0){
+            for(Analysis analysis: analysisList.analysisMap.values()){
+                String mapTerm = Synonyms.getTermBySynonym(analysis.getInstrument_type());
+                if(mapTerm == null)
+                    mapTerm = analysis.getInstrument_type();
+                experimentTypes.add(mapTerm);
+            }
+        }
+        return new ArrayList<String>(experimentTypes);
     }
 
     private static Set<String> transformFactors(FactorList factorList) {
@@ -247,11 +261,18 @@ public class ReaderMWProject {
 //     * @param instruments List of instruments from PX submission
 //     * @return List of CvParams
 //     */
-    private static Instrument transformInstrument(Analysis analysis) {
-        Instrument instrument = null;
-        if(analysis != null)
-             instrument = new Instrument(analysis.getInstrument_type(), analysis.getInstrument_name());
-        return instrument;
+    private static Set<Instrument> transformInstrument(AnalysisList analysis) {
+        Set<Instrument> instruments = new HashSet<Instrument>();
+        if(analysis != null && analysis.analysisMap != null && analysis.analysisMap.size() >0){
+            for(Analysis analysisValue: analysis.analysisMap.values()){
+                if(analysis != null){
+                    Instrument instrument = new Instrument(analysisValue.getInstrument_type(), analysisValue.getInstrument_name());
+                    instruments.add(instrument);
+                }
+
+            }
+        }
+        return instruments;
     }
 //
 //    /**

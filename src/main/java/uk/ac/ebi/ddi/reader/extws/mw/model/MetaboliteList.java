@@ -1,9 +1,8 @@
-package uk.ac.ebi.ddi.reader.extws.mw.model.dataset;
+package uk.ac.ebi.ddi.reader.extws.mw.model;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
 
 import java.util.HashMap;
 import java.util.Map;

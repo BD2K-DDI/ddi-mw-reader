@@ -8,10 +8,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import uk.ac.ebi.ddi.reader.extws.entrez.client.taxonomy.TaxonomyWsClient;
 import uk.ac.ebi.ddi.reader.extws.entrez.config.TaxWsConfigProd;
 import uk.ac.ebi.ddi.reader.extws.entrez.ncbiresult.NCBITaxResult;
-import uk.ac.ebi.ddi.reader.extws.mw.client.dataset.DatasetWsClient;
+import uk.ac.ebi.ddi.reader.extws.mw.client.DatasetWsClient;
 
 import uk.ac.ebi.ddi.reader.extws.mw.config.MWWsConfigProd;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.*;
+import uk.ac.ebi.ddi.reader.extws.mw.model.*;
 import uk.ac.ebi.ddi.reader.model.Project;
 
 import uk.ac.ebi.ddi.reader.utils.ReaderMWProject;
@@ -19,10 +19,6 @@ import uk.ac.ebi.ddi.reader.utils.WriterEBeyeXML;
 
 
 import java.io.File;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 
 /**
@@ -32,8 +28,6 @@ import java.util.List;
  */
 
 public class GenerateMWEbeFiles {
-
-    private static HashMap<String, String> pageBuffer = new HashMap<String, String>();
 
     private static final Logger logger = LoggerFactory.getLogger(GenerateMWEbeFiles.class);
 
@@ -70,7 +64,7 @@ public class GenerateMWEbeFiles {
 
             if (datasets != null && datasets.datasets != null) {
                 for (DataSet dataset : datasets.datasets.values()) {
-                    Analysis analysis = null;
+                    AnalysisList analysis = null;
                     MetaboliteList metabolites = null;
                     FactorList factorList = null;
                     if(dataset != null && dataset.getId() != null){

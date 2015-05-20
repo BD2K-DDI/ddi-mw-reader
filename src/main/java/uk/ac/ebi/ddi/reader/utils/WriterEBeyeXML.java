@@ -4,12 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.DataSet;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.Metabolite;
-import uk.ac.ebi.ddi.reader.model.CvParam;
+import uk.ac.ebi.ddi.reader.extws.mw.model.Metabolite;
+import uk.ac.ebi.ddi.reader.model.Instrument;
 import uk.ac.ebi.ddi.reader.model.Project;
-import uk.ac.ebi.ddi.reader.model.Reference;
-import uk.ac.ebi.ddi.reader.model.Submitter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,8 +18,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * GenerateEBeyeXML object.
@@ -65,6 +60,9 @@ public class WriterEBeyeXML {
      */
     public void generate() throws Exception {
 
+       if(project.getAccession().equalsIgnoreCase("ST000043"))
+          System.out.println(project.getAccession());
+
         if (project==null || outputDirectory==null) {
             logger.error("The project, submission, and output directory all needs to be set before genearting EB-eye XML.");
         }
@@ -97,7 +95,7 @@ public class WriterEBeyeXML {
 
             //Release date (This release date is related whit the day where the data was generated)
             Element releaseDate = document.createElement("release_date");
-            releaseDate.appendChild(document.createTextNode(new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
+            releaseDate.appendChild(document.createTextNode(new SimpleDateFormat("yy-MM-dd").format(new Date())));
             database.appendChild(releaseDate);
 
             Element entryCount = document.createElement("entry_count");
@@ -186,18 +184,23 @@ public class WriterEBeyeXML {
 
             //Add Data Processing Protocol
             if (project.getDataProcessingProtocol()!=null && !project.getDataProcessingProtocol().isEmpty()) {
-                Element dataProcProt = document.createElement("field");
-                dataProcProt.setAttribute("name", "data_protocol");
-                dataProcProt.appendChild(document.createTextNode(project.getDataProcessingProtocol()));
-                additionalFields.appendChild(dataProcProt);
+                for(String dataprocessing: project.getDataProcessingProtocol()){
+                    Element dataProcProt = document.createElement("field");
+                    dataProcProt.setAttribute("name", "data_protocol");
+                    dataProcProt.appendChild(document.createTextNode(dataprocessing));
+                    additionalFields.appendChild(dataProcProt);
+                }
             }
 
             //Add Instrument information
-            if (project.getInstrument()!=null && project.getInstrument().getName() != null) {
-                Element fieldInstruemnt = document.createElement("field");
-                fieldInstruemnt.setAttribute("name", "instrument_platform");
-                fieldInstruemnt.appendChild(document.createTextNode(project.getInstrument().getName()));
-                additionalFields.appendChild(fieldInstruemnt);
+            if (project.getInstrument()!=null && project.getInstrument().size() > 0) {
+                for(Instrument instrument:project.getInstrument()){
+                    Element fieldInstruemnt = document.createElement("field");
+                    fieldInstruemnt.setAttribute("name", "instrument_platform");
+                    fieldInstruemnt.appendChild(document.createTextNode(instrument.getName()));
+                    additionalFields.appendChild(fieldInstruemnt);
+                }
+
             } else {
                 Element fieldInstruemnt = document.createElement("field");
                 fieldInstruemnt.setAttribute("name", "instrument_platform");

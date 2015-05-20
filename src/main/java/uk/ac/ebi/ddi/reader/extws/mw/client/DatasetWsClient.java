@@ -1,13 +1,13 @@
-package uk.ac.ebi.ddi.reader.extws.mw.client.dataset;
+package uk.ac.ebi.ddi.reader.extws.mw.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.*;
-import uk.ac.ebi.ddi.reader.extws.mw.client.MWClient;
+import uk.ac.ebi.ddi.reader.extws.mw.model.*;
 import uk.ac.ebi.ddi.reader.extws.mw.config.AbstractMWWsConfig;
 
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -42,15 +42,22 @@ public class DatasetWsClient extends MWClient{
         return this.restTemplate.getForObject(url, DatasetList.class);
     }
 
-    public Analysis getAnalysisInformantion(String id){
+    public AnalysisList getAnalysisInformantion(String id){
 
         String url = String.format("%s://%s/rest/study/study_id/%s/analysis",
                 config.getProtocol(), config.getHostName(), id);
         //Todo: Needs to be removed in the future, this is for debugging
         logger.debug(url);
-
-        return this.restTemplate.getForObject(url, Analysis.class);
-
+        AnalysisList analysisList = null;
+        try{
+            analysisList = this.restTemplate.getForObject(url, AnalysisList.class);
+        }catch(Exception e){
+            Analysis analysisSingle = this.restTemplate.getForObject(url, Analysis.class);
+            analysisList = new AnalysisList();
+            analysisList.analysisMap = new HashMap<String, Analysis>();
+            analysisList.analysisMap.put("1", analysisSingle);
+        }
+        return analysisList;
     }
 
     public MetaboliteList getMataboliteList(String id){
