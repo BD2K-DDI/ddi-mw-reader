@@ -20,7 +20,9 @@ import uk.ac.ebi.ddi.reader.utils.WriterEBeyeXML;
 
 import java.io.File;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -83,9 +85,8 @@ public class GenerateMWEbeFiles {
                                 texId.getNCBITaxonomy() != null &&
                                 texId.getNCBITaxonomy().length > 0 &&
                                 texId.getNCBITaxonomy()[0] != null)
-                            dataset.setTaxonomy(texId.getNCBITaxonomy()[0]);
+                                dataset.setTaxonomy(texId.getNCBITaxonomy()[0]);
                     }
-                    System.out.println(metabolites);
                     Project proj = ReaderMWProject.readProject(dataset, analysis, metabolites, factorList);
                     WriterEBeyeXML writer = new WriterEBeyeXML(proj, new File(outputFolder), null);
                     writer.generate();

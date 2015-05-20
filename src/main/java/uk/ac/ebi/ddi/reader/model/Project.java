@@ -1,8 +1,8 @@
 package uk.ac.ebi.ddi.reader.model;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.Metabolite;
+
+import java.util.*;
 
 /**
  * General Project information of about the Project
@@ -37,6 +37,9 @@ public class Project {
     private Submitter submitter;
 
     private String datasetLink;
+
+    private List<Metabolite> metaboligths;
+    private Set<String> factors;
 
     /**
      * Default constructor create a List of every list-based attribute
@@ -165,5 +168,29 @@ public class Project {
 
     public void setDatasetLink(String datasetLink) {
         this.datasetLink = datasetLink;
+    }
+
+    public Instrument getInstrument() {
+        return instrument;
+    }
+
+    public List<Metabolite> getMetaboligths() {
+        return metaboligths;
+    }
+
+    public void setMetaboligths(List<Metabolite> metaboligths) {
+        this.metaboligths = metaboligths;
+    }
+
+    public void setMetaboligths(Collection<Metabolite> metabolites){
+        this.metaboligths = new ArrayList<Metabolite>(metabolites);
+    }
+
+    public void setFactors(Set<String> factors) {
+        this.factors = factors;
+    }
+
+    public Set<String> getFactors() {
+        return factors;
     }
 }

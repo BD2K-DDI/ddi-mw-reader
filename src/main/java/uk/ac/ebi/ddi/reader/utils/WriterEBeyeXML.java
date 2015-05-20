@@ -37,7 +37,7 @@ public class WriterEBeyeXML {
 
     private static final String NOT_AVAILABLE = "Not available";
 
-    private static final String OMICS_TYPE    = "Proteomics";
+    private static final String OMICS_TYPE    = "Metabolomics";
 
     private static final String DEFAULT_EXPERIMENT_TYPE = "Mass Spectrometry";
 

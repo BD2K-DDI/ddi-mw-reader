@@ -1,30 +1,14 @@
 package uk.ac.ebi.ddi.reader.utils;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.Analysis;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.DataSet;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.FactorList;
-import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.MetaboliteList;
+import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.*;
 import uk.ac.ebi.ddi.reader.model.*;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-
-import java.io.InputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -46,29 +30,33 @@ public class ReaderMWProject {
      */
     public static Project readProject(DataSet dataset,
                                       Analysis analysis,
-                                      MetaboliteList metabolities,
+                                      MetaboliteList metabolites,
                                       FactorList factorList) throws Exception {
-          Project proj = new Project();
+        Project proj = new Project();
 
-          proj.setAccession(dataset.getId());
+        proj.setAccession(dataset.getId());
         
-          proj.setRepositoryName(METABOLOME_REPOSITORY);
+        proj.setRepositoryName(METABOLOME_REPOSITORY);
 
-          proj.setTitle(dataset.getTitle());
+        proj.setTitle(dataset.getTitle());
 
-          proj.setProjectDescription(dataset.getDescription());
+        proj.setProjectDescription(dataset.getDescription());
 
-          proj.setInstrument(transformInstrument(analysis));
+        proj.setInstrument(transformInstrument(analysis));
 
-          proj.setSpecie(transformSpecie(dataset));
+        proj.setSpecie(transformSpecie(dataset));
 
-          proj.setSubmitter(transformSubmitter(dataset));
-//
-//
-//        //Set DatasetLink
-          proj.setDatasetLink(METABOLOMEWORKBENCH_LINK + proj.getAccession());
+        proj.setSubmitter(transformSubmitter(dataset));
 
-          return proj;
+        proj.setMetaboligths(metabolites.metabolites.values());
+
+        proj.setDatasetLink(METABOLOMEWORKBENCH_LINK + proj.getAccession());
+
+        proj.setExperimentTypes(transformExperimentTypes(dataset.getType()));
+
+        proj.setFactors(transformFactors(factorList));
+
+        return proj;
     }
 
     private static Specie transformSpecie(DataSet dataset) {
@@ -90,87 +78,25 @@ public class ReaderMWProject {
         return submitter;
     }
 
-    //
-//    /**
-//     * Set references for the Project
-//     * @param references
-//     * @return
-//     */
-//    private static List<Reference> transformReferences(List<PublicationType> references) {
-//        List<Reference> referenceList = new ArrayList<Reference>();
-//        for(PublicationType publication: references){
-//            Reference ref = new Reference();
-//            for(CvParamType cv: publication.getCvParam()){
-//               if(cv.getAccession().equalsIgnoreCase(Constants.PUBMED_ACCESSION)){
-//                   if(cv.getValue() != null && cv.getValue().length() > 0 &&
-//                           StringUtils.isNumeric(cv.getValue()))
-//                                   ref.setPubmedId(Integer.parseInt(cv.getValue()));
-//               }
-//                if(!cv.getAccession().equalsIgnoreCase(Constants.PUBMED_ACCESSION)){
-//                    ref.setReferenceLine(cv.getValue());
-//                }
-//            }
-//            if(ref.getPubmedId() != null || ref.getReferenceLine() != null)
-//                referenceList.add(ref);
-//        }
-//        return referenceList;
-//    }
-//
-//    private static List<CvParam> transformExperimentTypes(List<CvParamType> submitterKeywords) {
-//        List<CvParam> experimentTypes = new ArrayList<CvParam>();
-//        for(CvParamType cvParamType: submitterKeywords){
-//            if(cvParamType.getValue().contains(Constants.SRM_KEYWORD) || cvParamType.getName().contains("SRM")){
-//                CvParam cvParam = new CvParam("PRIDE:0000311","SRM/MRM", "PRIDE", "SRM/MRM");
-//                experimentTypes.add(cvParam);
-//            }
-//        }
-//        return experimentTypes;
-//    }
-//
-//    /**
-//     * Retrieve information about the experiment URL
-//     * @param fullDatasetLink experiment List URL
-//     * @return experiment URL
-//     */
-//    private static String transformGetDatasetLink(List<FullDatasetLinkType> fullDatasetLink) {
-//        if(fullDatasetLink != null && fullDatasetLink.size() >0){
-//            for(FullDatasetLinkType datasetLink: fullDatasetLink)
-//                if(datasetLink.getCvParam().getAccession().equalsIgnoreCase(Constants.MASSIVEURL_ACCESSION) ||
-//                   datasetLink.getCvParam().getAccession().equalsIgnoreCase(Constants.PASSELURL_ACCESSION))
-//                    return datasetLink.getCvParam().getValue();
-//        }
-//        return null;
-//    }
-//
-//    /**
-//     * Retrieve the curator keywords
-//     * @param submitterKeywords
-//     * @return List<String> List of keywords
-//     */
-//    private static List<String> transformCuratorKeywords(List<CvParamType> submitterKeywords) {
-//        List<String> keywords = new ArrayList<String>();
-//        for(CvParamType cv: submitterKeywords)
-//            if(cv.getAccession().equalsIgnoreCase(Constants.CURATORKEY_ACCESSION))
-//                keywords.add(cv.getValue());
-//        return keywords;
-//    }
-//
-//    /**
-//     * Read Submitter keywords
-//     * @param submitterKeywords List<CvParamType>
-//     * @return List of keys
-//     */
-//    private static List<String> transformSubmitterKeywords(List<CvParamType> submitterKeywords) {
-//        List<String> keywords = new ArrayList<String>();
-//        for(CvParamType cv: submitterKeywords){
-//            if(cv.getAccession().equalsIgnoreCase(Constants.SUBMITTERKEY_ACCESSION))
-//                keywords.add(cv.getValue());
-//        }
-//        return keywords;
-//    }
-//
-//    /**
-//     * Return the list of File Name related with the Dataset
+
+    private static List<String> transformExperimentTypes(String type) {
+        List<String> experimentTypes = new ArrayList<String>();
+        return experimentTypes;
+    }
+
+    private static Set<String> transformFactors(FactorList factorList) {
+        Set<String> factorListResult = new HashSet<String>();
+        if(factorList != null && factorList.factors != null && factorList.factors.size()> 0){
+            for(Factor factor: factorList.factors.values()){
+                if(factor != null && factor.getFactors() != null){
+                    factorListResult.add(factor.getFactors());
+                }
+            }
+        }
+        return factorListResult;
+    }
+
+//ist of File Name related with the Dataset
 //     * @param dataFiles List<DatasetFileType>
 //     * @return          List<String>
 //     */
