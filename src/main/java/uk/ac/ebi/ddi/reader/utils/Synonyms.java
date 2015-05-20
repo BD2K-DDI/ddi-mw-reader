@@ -40,10 +40,12 @@ public enum Synonyms {
     }
 
     public static String getTermBySynonym(String synonym){
-        for(Synonyms value: Synonyms.values()){
-            for(String valueSyn: value.getSynomyms())
-                if(synonym.compareToIgnoreCase(valueSyn) == 0)
-                    return value.getTerm();
+        if(synonym != null){
+            for(Synonyms value: Synonyms.values()){
+                for(String valueSyn: value.getSynomyms())
+                    if(synonym.compareToIgnoreCase(valueSyn) == 0)
+                        return value.getTerm();
+            }
         }
         return null;
     }
