@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.DataSet;
+import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.Metabolite;
 import uk.ac.ebi.ddi.reader.model.CvParam;
 import uk.ac.ebi.ddi.reader.model.Project;
 import uk.ac.ebi.ddi.reader.model.Reference;
@@ -41,11 +42,11 @@ public class WriterEBeyeXML {
 
     private static final String DEFAULT_EXPERIMENT_TYPE = "Mass Spectrometry";
 
+    private static final String METABOLOME_WORKBENCH_DESCRIPTION = "The Metabolomics Workbench will serve as a national and international repository for metabolomics data and metadata and will provide analysis tools and access to metabolite standards, protocols, tutorials, training, and more.";
+
     private Project project;
 
     private File outputDirectory;
-
-    private Map<String, String> metabolites;
 
     /**
      * Constructor.
@@ -53,10 +54,9 @@ public class WriterEBeyeXML {
      * @param proj  (required) public project to be used for generating the EB-eye XML.
      * @param outputDirectory   (required) target output directory.
      */
-    public WriterEBeyeXML(Project proj, File outputDirectory, Map<String, String> metabolites) {
+    public WriterEBeyeXML(Project proj, File outputDirectory) {
         this.project = proj;
         this.outputDirectory = outputDirectory;
-        this.metabolites = (metabolites == null)? new HashMap<String,String>(): metabolites;
     }
 
     /**
@@ -87,12 +87,12 @@ public class WriterEBeyeXML {
 
             //Add the description of the database
             Element description = document.createElement("description");
-            description.appendChild(document.createTextNode(""));
+            description.appendChild(document.createTextNode(METABOLOME_WORKBENCH_DESCRIPTION));
             database.appendChild(description);
 
             //Database release
             Element release = document.createElement("release");
-            release.appendChild(document.createTextNode("3"));
+            release.appendChild(document.createTextNode("1.0"));
             database.appendChild(release);
 
             //Release date (This release date is related whit the day where the data was generated)
@@ -117,6 +117,7 @@ public class WriterEBeyeXML {
             entry.appendChild(projectName);
 
             String projDescription = project.getTitle();
+            // We validate here if
             if (project.getProjectDescription()!=null && !project.getProjectDescription().isEmpty())
                 projDescription = project.getProjectDescription();
 
@@ -124,40 +125,24 @@ public class WriterEBeyeXML {
             projectTitle.appendChild(document.createTextNode(projDescription));
             entry.appendChild(projectTitle);
 
-
-            /**
-             * Add all cross references to other databases such as TAXONOMY, UNIPROT OR ENSEMBL
-             */
-
             Element crossReferences = document.createElement("cross_references");
             entry.appendChild(crossReferences);
 
-//            if (project.getTaxonomies()!=null) {
-//                for (String taxonomy : project.getTaxonomies()) {
-//                    Element refSpecies = document.createElement("ref");
-//                    refSpecies.setAttribute("dbkey", taxonomy);
-//                    refSpecies.setAttribute("dbname", "TAXONOMY");
-//                    crossReferences.appendChild(refSpecies);
-//                }
-//            }
+            if (project.getSpecie() != null && project.getSpecie().getTaxId() != null) {
+                Element refSpecies = document.createElement("ref");
+                refSpecies.setAttribute("dbkey", project.getSpecie().getTaxId());
+                refSpecies.setAttribute("dbname", "TAXONOMY");
+                crossReferences.appendChild(refSpecies);
+            }
 
-//            if (project.getReferences()!=null && project.getReferences().size()>0) {
-//                for (Reference reference : project.getReferences()) {
-//                    if(reference.getPubmedId() != null){
-//                        Element refPubMedID = document.createElement("ref");
-//                        refPubMedID.setAttribute("dbkey", Integer.toString(reference.getPubmedId()));
-//                        refPubMedID.setAttribute("dbname", "pubmed");
-//                        crossReferences.appendChild(refPubMedID);
-//                    }
-//                }
-//            }
-
-            if (metabolites !=null && !metabolites.isEmpty()) {
-                for (String protein : metabolites.keySet()) {
-                    Element refProtein = document.createElement("ref");
-                    refProtein.setAttribute("dbkey", protein);
-                    refProtein.setAttribute("dbname", metabolites.get(protein));
-                    crossReferences.appendChild(refProtein);
+            if (project !=null && project.getMetaboligths() != null && project.getMetaboligths().size() > 0 ) {
+                for (Metabolite met : project.getMetaboligths()) {
+                    if(met != null && met.getChebi() != null){
+                        Element refMet = document.createElement("ref");
+                        refMet.setAttribute("dbkey", met.getChebi());
+                        refMet.setAttribute("dbname", "ChEBI");
+                        crossReferences.appendChild(refMet);
+                    }
                 }
             }
 
@@ -166,17 +151,9 @@ public class WriterEBeyeXML {
 
             if(project.getSubmissionDate() != null){
                 Element dateSubmitted = document.createElement("date");
-                dateSubmitted.setAttribute("value", new SimpleDateFormat("yyyy-MM-dd").format(project.getSubmissionDate()));
+                dateSubmitted.setAttribute("value", new SimpleDateFormat("yy-MM-dd").format(project.getSubmissionDate()));
                 dateSubmitted.setAttribute("type", "submission");
                 dates.appendChild(dateSubmitted);
-            }
-
-
-            if(project.getPublicationDate() != null){
-                Element datePublished = document.createElement("date");
-                datePublished.setAttribute("value", new SimpleDateFormat("yyyy-MM-dd").format(project.getPublicationDate()));
-                datePublished.setAttribute("type", "publication");
-                dates.appendChild(datePublished);
             }
 
             /**
@@ -201,37 +178,11 @@ public class WriterEBeyeXML {
                 additionalFields.appendChild(repoLink);
             }
 
-//            if(project.getSubmissionDate() != null){
-//                Element submissionDate = document.createElement("field");
-//                submissionDate.setAttribute("name", "submission_date");
-//                submissionDate.appendChild(document.createTextNode(new SimpleDateFormat("yyyy-MM-dd").format(project.getSubmissionDate())));
-//                additionalFields.appendChild(submissionDate);
-//            }
-
-
             //Add the domain source
             Element respository = document.createElement("field");
             respository.setAttribute("name", "repository");
             respository.appendChild(document.createTextNode(project.getRepositoryName()));
             additionalFields.appendChild(respository);
-
-
-//            //Add the Sample Processing Protocol
-//            if(project.getPublicationDate() != null){
-//                Element publicationDate = document.createElement("field");
-//                publicationDate.setAttribute("name", "publication_date");
-//                publicationDate.appendChild(document.createTextNode(new SimpleDateFormat("yyyy-MM-dd").format(project.getPublicationDate())));
-//                additionalFields.appendChild(publicationDate);
-//            }
-
-
-            //Add the Sample Processing Protocol
-            if (project.getSampleProcessingProtocol()!=null && !project.getSampleProcessingProtocol().isEmpty()) {
-                Element sampleProcProt = document.createElement("field");
-                sampleProcProt.setAttribute("name", "sample_protocol");
-                sampleProcProt.appendChild(document.createTextNode(project.getSampleProcessingProtocol()));
-                additionalFields.appendChild(sampleProcProt);
-            }
 
             //Add Data Processing Protocol
             if (project.getDataProcessingProtocol()!=null && !project.getDataProcessingProtocol().isEmpty()) {
@@ -241,51 +192,59 @@ public class WriterEBeyeXML {
                 additionalFields.appendChild(dataProcProt);
             }
 
-//            //Add Instrument information
-//            if (project.getInstruments()!=null && project.getInstruments().size()>0) {
-//                for (CvParam instrument : project.getInstruments()) {
-//                    Element fieldInstruemnt = document.createElement("field");
-//                    fieldInstruemnt.setAttribute("name", "instrument_platform");
-//                    fieldInstruemnt.appendChild(document.createTextNode(instrument.getName()));
-//                    additionalFields.appendChild(fieldInstruemnt);
-//                }
-//            } else {
-//                Element fieldInstruemnt = document.createElement("field");
-//                fieldInstruemnt.setAttribute("name", "instrument_platform");
-//                fieldInstruemnt.appendChild(document.createTextNode(NOT_AVAILABLE));
-//                additionalFields.appendChild(fieldInstruemnt);
-//            }
+            //Add Instrument information
+            if (project.getInstrument()!=null && project.getInstrument().getName() != null) {
+                Element fieldInstruemnt = document.createElement("field");
+                fieldInstruemnt.setAttribute("name", "instrument_platform");
+                fieldInstruemnt.appendChild(document.createTextNode(project.getInstrument().getName()));
+                additionalFields.appendChild(fieldInstruemnt);
+            } else {
+                Element fieldInstruemnt = document.createElement("field");
+                fieldInstruemnt.setAttribute("name", "instrument_platform");
+                fieldInstruemnt.appendChild(document.createTextNode(NOT_AVAILABLE));
+                additionalFields.appendChild(fieldInstruemnt);
+            }
+
+            //Add Study factors
+            if (project.getFactors() != null && project.getFactors().size() > 0) {
+                for(String factor: project.getFactors()){
+                    if(factor != null){
+                        Element factorField = document.createElement("field");
+                        factorField.setAttribute("name", "study_factor");
+                        factorField.appendChild(document.createTextNode(factor));
+                        additionalFields.appendChild(factorField);
+                    }
+                }
+            }
 
             //Add information about the species
-//            if (project.getSpecies()!=null && project.getSpecies().size()>0) {
-//                for (CvParam species : project.getSpecies()) {
-//                    Element refSpecies = document.createElement("field");
-//                    refSpecies.setAttribute("name", "species");
-//                    refSpecies.appendChild(document.createTextNode(species.getValue()));
-//                    additionalFields.appendChild(refSpecies);
-//                }
-//            } else {
-//                Element refSpecies = document.createElement("field");
-//                refSpecies.setAttribute("name", "species");
-//                refSpecies.appendChild(document.createTextNode(NOT_AVAILABLE));
-//                additionalFields.appendChild(refSpecies);
-//            }
+            if (project.getSpecie()!=null && project.getSpecie().getName() != null) {
+                Element refSpecies = document.createElement("field");
+                refSpecies.setAttribute("name", "species");
+                refSpecies.appendChild(document.createTextNode(project.getSpecie().getName()));
+                additionalFields.appendChild(refSpecies);
+            } else {
+                Element refSpecies = document.createElement("field");
+                refSpecies.setAttribute("name", "species");
+                refSpecies.appendChild(document.createTextNode(NOT_AVAILABLE));
+                additionalFields.appendChild(refSpecies);
+            }
 
 
-//            //Add information about experiment type
-//            if (project.getExperimentTypes()!=null && project.getExperimentTypes().size()>0) {
-//                for (CvParam expType : project.getExperimentTypes()) {
-//                    Element refExpType = document.createElement("field");
-//                    refExpType.setAttribute("name", "technology_type");
-//                    refExpType.appendChild(document.createTextNode(expType.getName()));
-//                    additionalFields.appendChild(refExpType);
-//                }
-//            } else {
-//                Element refExpType = document.createElement("field");
-//                refExpType.setAttribute("name", "technology_type");
-//                refExpType.appendChild(document.createTextNode(DEFAULT_EXPERIMENT_TYPE));
-//                additionalFields.appendChild(refExpType);
-//            }
+             //Add information about experiment type
+            if (project.getExperimentTypes()!=null && project.getExperimentTypes().size()> 0) {
+                for (String expType : project.getExperimentTypes()) {
+                    Element refExpType = document.createElement("field");
+                    refExpType.setAttribute("name", "technology_type");
+                    refExpType.appendChild(document.createTextNode(expType));
+                    additionalFields.appendChild(refExpType);
+                }
+            } else {
+                Element refExpType = document.createElement("field");
+                refExpType.setAttribute("name", "technology_type");
+                refExpType.appendChild(document.createTextNode(NOT_AVAILABLE));
+                additionalFields.appendChild(refExpType);
+            }
 
             //Add curator tags and keywords
             if (project.getProjectTags()!=null && project.getProjectTags().size()>0) {
@@ -297,15 +256,33 @@ public class WriterEBeyeXML {
                 }
             }
 
-//            if (project.getKeywords()!=null && !project.getKeywords().isEmpty()) {
-//                for(String keyword: project.getKeywords()){
-//                    Element keywords = document.createElement("field");
-//                    keywords.setAttribute("name", "submitter_keywords");
-//                    keywords.appendChild(document.createTextNode(keyword));
-//                    additionalFields.appendChild(keywords);
-//                }
-//            }
+            /**
+             * Add the matabolite names for search purpose for extra reasons
+             */
+            if(project.getMetaboligths() != null && project.getMetaboligths().size() > 0){
+                for(Metabolite met: project.getMetaboligths()){
+                    if(met != null && met.getName() != null){
+                        Element metName = document.createElement("field");
+                        metName.setAttribute("name", "metabolite_name");
+                        metName.appendChild(document.createTextNode(met.getName()));
+                        additionalFields.appendChild(metName);
+                    }
+                }
+            }
 
+            /**
+             * Add the matabolite pubchem ids for search purpose for extra reasons
+             */
+            if(project.getMetaboligths() != null && project.getMetaboligths().size() > 0){
+                for(Metabolite met: project.getMetaboligths()){
+                    if(met != null && met.getPubchem() != null){
+                        Element metName = document.createElement("field");
+                        metName.setAttribute("name", "pubchem_id");
+                        metName.appendChild(document.createTextNode(met.getPubchem()));
+                        additionalFields.appendChild(metName);
+                    }
+                }
+            }
 
             //Add submitter information
             if(project.getSubmitter() != null){

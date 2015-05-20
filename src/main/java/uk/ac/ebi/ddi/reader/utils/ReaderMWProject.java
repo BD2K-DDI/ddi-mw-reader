@@ -5,10 +5,10 @@ import org.slf4j.LoggerFactory;
 import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.*;
 import uk.ac.ebi.ddi.reader.model.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
@@ -19,7 +19,7 @@ public class ReaderMWProject {
 
     private static final Logger logger = LoggerFactory.getLogger(ReaderMWProject.class);
 
-    private static final String METABOLOME_REPOSITORY = "Metabolomics Workbench";
+    private static final String METABOLOME_REPOSITORY = "MetabolomicsWorkbench";
 
     private static final String METABOLOMEWORKBENCH_LINK = "http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=";
 
@@ -48,15 +48,30 @@ public class ReaderMWProject {
 
         proj.setSubmitter(transformSubmitter(dataset));
 
-        proj.setMetaboligths(metabolites.metabolites.values());
+        proj.setMetaboligths(metabolites);
 
         proj.setDatasetLink(METABOLOMEWORKBENCH_LINK + proj.getAccession());
 
-        proj.setExperimentTypes(transformExperimentTypes(dataset.getType()));
+        proj.setExperimentTypes(transformExperimentTypes(analysis.getType()));
 
         proj.setFactors(transformFactors(factorList));
 
+        proj.setSubmissionDate(transformDate(dataset.getSubmit_date()));
+
+        proj.setDataProcessingProtocol(analysis.getSummary());
+
         return proj;
+    }
+
+    private static Date transformDate(String submit_date) {
+        DateFormat formatter = new SimpleDateFormat("yy-MM-dd");
+        Date date = null;
+        try {
+            date = formatter.parse(submit_date);
+        } catch (ParseException e) {
+            logger.debug(e.getLocalizedMessage());
+        }
+        return date;
     }
 
     private static Specie transformSpecie(DataSet dataset) {
@@ -78,9 +93,12 @@ public class ReaderMWProject {
         return submitter;
     }
 
-
     private static List<String> transformExperimentTypes(String type) {
+        String mapTerm = Synonyms.getTermBySynonym(type);
+        if(mapTerm == null)
+            mapTerm = type;
         List<String> experimentTypes = new ArrayList<String>();
+        experimentTypes.add(mapTerm);
         return experimentTypes;
     }
 

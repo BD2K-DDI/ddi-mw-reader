@@ -66,6 +66,8 @@ public class GenerateMWEbeFiles {
 
             DatasetList datasets = datasetWsClient.getAllDatasets();
 
+            int count = 10;
+
             if (datasets != null && datasets.datasets != null) {
                 for (DataSet dataset : datasets.datasets.values()) {
                     Analysis analysis = null;
@@ -88,8 +90,10 @@ public class GenerateMWEbeFiles {
                                 dataset.setTaxonomy(texId.getNCBITaxonomy()[0]);
                     }
                     Project proj = ReaderMWProject.readProject(dataset, analysis, metabolites, factorList);
-                    WriterEBeyeXML writer = new WriterEBeyeXML(proj, new File(outputFolder), null);
+                    WriterEBeyeXML writer = new WriterEBeyeXML(proj, new File(outputFolder));
                     writer.generate();
+                    count--;
+                    if(count < 0) System.exit(0);
                 }
             }
         } catch (Exception e) {

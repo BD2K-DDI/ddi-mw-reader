@@ -1,6 +1,7 @@
 package uk.ac.ebi.ddi.reader.model;
 
 import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.Metabolite;
+import uk.ac.ebi.ddi.reader.extws.mw.model.dataset.MetaboliteList;
 
 import java.util.*;
 
@@ -89,10 +90,6 @@ public class Project {
         return dataProcessingProtocol;
     }
 
-    public Instrument getInstruments() {
-        return instrument;
-    }
-
     public List<String> getExperimentTypes() {
         return experimentTypes;
     }
@@ -178,8 +175,10 @@ public class Project {
         return metaboligths;
     }
 
-    public void setMetaboligths(List<Metabolite> metaboligths) {
-        this.metaboligths = metaboligths;
+    public void setMetaboligths(MetaboliteList metaboligths) {
+        if(metaboligths != null && metaboligths.metabolites != null && metaboligths.metabolites.size() > 0){
+            this.metaboligths = new ArrayList<Metabolite>(metaboligths.metabolites.values());
+        }
     }
 
     public void setMetaboligths(Collection<Metabolite> metabolites){
