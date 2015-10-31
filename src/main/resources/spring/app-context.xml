@@ -10,6 +10,15 @@
     <bean id="taxWsConfig" class="uk.ac.ebi.ddi.mw.extws.entrez.config.TaxWsConfigProd">
     </bean>
 
+    <bean class="org.springframework.web.client.RestTemplate">
+        <constructor-arg>
+            <bean class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+                  <property name="readTimeout" value="20000"/>
+                  <property name="connectTimeout" value="20000" />
+            </bean>
+        </constructor-arg>
+    </bean>
+
 
 
 
