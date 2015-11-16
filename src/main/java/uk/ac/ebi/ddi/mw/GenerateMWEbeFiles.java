@@ -83,7 +83,12 @@ public class GenerateMWEbeFiles {
                     metabolites = datasetWsClient.updateChebiId(metabolites);
 
                 if(dataset != null && dataset.getSubject_species() != null){
-                    NCBITaxResult texId = taxonomyWsClient.getNCBITax(dataset.getSubject_species());
+                    NCBITaxResult texId = null;
+                    try{
+                        texId = taxonomyWsClient.getNCBITax(dataset.getSubject_species());
+                    }catch(Exception e){
+                        logger.info("Errors with the webservices on NCBI: " + e.getMessage());
+                    }
                     if(texId != null &&
                             texId.getNCBITaxonomy() != null &&
                             texId.getNCBITaxonomy().length > 0 &&

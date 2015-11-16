@@ -10,6 +10,7 @@ import uk.ac.ebi.ddi.mw.extws.entrez.config.TaxWsConfigProd;
  *
  * @author ypriverol
  */
+
 public class WsClient {
 
     protected RestTemplate restTemplate;
