@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import uk.ac.ebi.ddi.mw.extws.mw.model.*;
 import uk.ac.ebi.ddi.mw.model.Instrument;
 import uk.ac.ebi.ddi.mw.model.Project;
-import uk.ac.ebi.ddi.mw.model.Specie;
 import uk.ac.ebi.ddi.mw.model.Submitter;
 
 
@@ -35,7 +34,9 @@ public class ReaderMWProject {
     public static Project readProject(DataSet dataset,
                                       AnalysisList analysis,
                                       MetaboliteList metabolites,
-                                      FactorList factorList) throws Exception {
+                                      FactorList factorList,
+                                      Set<uk.ac.ebi.ddi.mw.extws.mw.model.Specie> species,
+                                      Set<String> tissues, Set<String> diseases) throws Exception {
         Project proj = new Project();
 
         proj.setAccession(dataset.getId());
@@ -48,7 +49,9 @@ public class ReaderMWProject {
 
         proj.setInstrument(transformInstrument(analysis));
 
-        proj.setSpecie(transformSpecie(dataset));
+        proj.setTaxonomies(transformTaxonomies(dataset));
+
+        proj.setSpecies(transformSpecies(species));
 
         proj.setSubmitter(transformSubmitter(dataset));
 
@@ -64,7 +67,30 @@ public class ReaderMWProject {
 
         proj.setDataProcessingProtocol(transformDataProcessing(analysis));
 
+        proj.setTissues(tissues);
+
+        proj.setDiseases(diseases);
+
         return proj;
+    }
+
+    /**
+     * We will use the latin number for each dataset but also the Common name
+     * as Metabolome workbench export.
+     * @param species
+     * @return
+     */
+    private static List<String> transformSpecies(Set<Specie> species) {
+        List<String> speciesResult = new ArrayList<String>();
+        if(species != null && !species.isEmpty())
+            for(Specie specie: species){
+                if(specie.getLantinName() != null)
+                    speciesResult.add(specie.getLantinName());
+                if(specie.getName() != null)
+                    speciesResult.add(specie.getName());
+            }
+
+        return speciesResult;
     }
 
     private static List<String> transformDataProcessing(AnalysisList analysisList) {
@@ -88,11 +114,12 @@ public class ReaderMWProject {
         return date;
     }
 
-    private static Specie transformSpecie(DataSet dataset) {
-        Specie specie = null;
-        if(dataset != null)
-            specie = new Specie(dataset.getSubject_species(), dataset.getTaxonomy());
-        return specie;
+    private static List<String> transformTaxonomies(DataSet dataset) {
+        List<String> taxonomies = new ArrayList<String>();
+         if(dataset != null && dataset.getTaxonomy() != null && !dataset.getTaxonomy().isEmpty())
+             for(String taxonomy: dataset.getTaxonomy())
+                taxonomies.add(taxonomy);
+        return taxonomies;
     }
 
     private static Submitter transformSubmitter(DataSet dataset) {

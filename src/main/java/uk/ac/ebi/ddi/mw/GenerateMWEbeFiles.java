@@ -20,9 +20,11 @@ import uk.ac.ebi.ddi.mw.utils.WriterEBeyeXML;
 
 import java.io.File;
 
+import java.util.Set;
+
 
 /**
- * This program takes a ProteomeXchange URL and generate for all the experiments the
+ * This program takes a MetabolomeWorkbench URL and generate for all the experiments the
  *
  * @author Yasset Perez-Riverol
  */
@@ -33,7 +35,8 @@ public class GenerateMWEbeFiles {
 
   /**
      * This program take an output folder as a parameter an create different EBE eyes files for
-     * all the project in ProteomeXchange. It loop all the project in MetabolomeWorkbench and print them to the give output
+     * all the project in MetabolomicsWorkbench. It loop all the project in MetabolomeWorkbench and
+     * print them to the give output
      *
      * @param args
      */
@@ -69,33 +72,44 @@ public class GenerateMWEbeFiles {
 
         DatasetList datasets = datasetWsClient.getAllDatasets();
 
+        TissueList tissueList   = datasetWsClient.getTissues();
+
+        SpecieList specieList   = datasetWsClient.getSpecies();
+
+        DiseaseList diseaseList = datasetWsClient.getDiseases();
+
         if (datasets != null && datasets.datasets != null) {
             for (DataSet dataset : datasets.datasets.values()) {
                 AnalysisList analysis = null;
                 MetaboliteList metabolites = null;
                 FactorList factorList = null;
+                Set<Specie> species = null;
+                Set<String> tissues = null;
+                Set<String> diseases = null;
                 if(dataset != null && dataset.getId() != null){
                     analysis = datasetWsClient.getAnalysisInformantion(dataset.getId());
                     metabolites = datasetWsClient.getMataboliteList(dataset.getId());
                     factorList = datasetWsClient.getFactorList(dataset.getId());
+                    tissues = tissueList.getTissuesByDataset(dataset.getId());
+                    species = specieList.getSpeciesByDataset(dataset.getId());
+                    diseases = diseaseList.getDiseasesByDataset(dataset.getId());
                 }
                 if(metabolites != null && metabolites.metabolites != null && metabolites.metabolites.size() > 0)
                     metabolites = datasetWsClient.updateChebiId(metabolites);
 
-                if(dataset != null && dataset.getSubject_species() != null){
+                if(dataset != null && species != null){
                     NCBITaxResult texId = null;
                     try{
-                        texId = taxonomyWsClient.getNCBITax(dataset.getSubject_species());
+                        texId = taxonomyWsClient.getNCBITax(species);
                     }catch(Exception e){
                         logger.info("Errors with the webservices on NCBI: " + e.getMessage());
                     }
-                    if(texId != null &&
+                if(texId != null &&
                             texId.getNCBITaxonomy() != null &&
-                            texId.getNCBITaxonomy().length > 0 &&
-                            texId.getNCBITaxonomy()[0] != null)
-                        dataset.setTaxonomy(texId.getNCBITaxonomy()[0]);
+                            texId.getNCBITaxonomy().length > 0)
+                         dataset.setTaxonomyArr(texId.getNCBITaxonomy());
                 }
-                Project proj = ReaderMWProject.readProject(dataset, analysis, metabolites, factorList);
+                Project proj = ReaderMWProject.readProject(dataset, analysis, metabolites, factorList, species, tissues, diseases);
                 WriterEBeyeXML writer = new WriterEBeyeXML(proj, new File(outputFolder));
                 writer.generate();
             }

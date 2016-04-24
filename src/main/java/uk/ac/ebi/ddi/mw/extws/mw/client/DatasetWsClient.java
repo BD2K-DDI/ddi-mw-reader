@@ -42,6 +42,11 @@ public class DatasetWsClient extends MWClient{
         return this.restTemplate.getForObject(url, DatasetList.class);
     }
 
+    /**
+     * Return the Analysis information for one particular dataset.
+     * @param id
+     * @return
+     */
     public AnalysisList getAnalysisInformantion(String id){
 
         String url = String.format("%s://%s/rest/study/study_id/%s/analysis",
@@ -133,5 +138,39 @@ public class DatasetWsClient extends MWClient{
         return factorList;
     }
 
+    /**
+     * This function retrieve all the specie information for each dataset.
+     * @return Specie List
+     */
+    public SpecieList getSpecies(){
+
+        String url = String.format("%s://%s/rest/study/study_id/ST/species",
+                config.getProtocol(), config.getHostName());
+        //Todo: Needs to be removed in the future, this is for debugging
+        logger.debug(url);
+
+        return this.restTemplate.getForObject(url, SpecieList.class);
+    }
+
+    public TissueList getTissues(){
+
+        String url = String.format("%s://%s/rest/study/study_id/ST/source",
+                config.getProtocol(), config.getHostName());
+        //Todo: Needs to be removed in the future, this is for debugging
+        logger.debug(url);
+
+        return this.restTemplate.getForObject(url, TissueList.class);
+
+    }
+
+    public DiseaseList getDiseases(){
+
+        String url = String.format("%s://%s/rest/study/study_id/ST/disease",
+                config.getProtocol(), config.getHostName());
+        //Todo: Needs to be removed in the future, this is for debugging
+        logger.debug(url);
+
+        return this.restTemplate.getForObject(url, DiseaseList.class);
+    }
 
 }

@@ -19,7 +19,9 @@ public class Project {
 
     private String projectDescription;
 
-    private Specie specie;
+    private List<String> taxonomies;
+
+    private List<String> species;
 
     private Date submissionDate;
 
@@ -36,7 +38,12 @@ public class Project {
     private String datasetLink;
 
     private List<Metabolite> metaboligths;
+
     private Set<String> factors;
+
+    private Set<String> tissues;
+
+    private Set<String> diseases;
 
     /**
      * Default constructor create a List of every list-based attribute
@@ -66,8 +73,8 @@ public class Project {
         return projectDescription;
     }
 
-    public Specie getSpecie() {
-        return specie;
+    public List<String> getSpecie() {
+        return species;
     }
 
     public Date getSubmissionDate() {
@@ -104,10 +111,6 @@ public class Project {
 
     public void setProjectDescription(String projectDescription) {
         this.projectDescription = projectDescription;
-    }
-
-    public void setSpecie(Specie specie) {
-        this.specie = specie;
     }
 
     public void setSubmissionDate(Date submissionDate) {
@@ -162,5 +165,45 @@ public class Project {
 
     public Set<String> getFactors() {
         return factors;
+    }
+
+    public List<String> getTaxonomies() {
+        return taxonomies;
+    }
+
+    public void setTaxonomies(List<String> taxonomies) {
+        this.taxonomies = taxonomies;
+    }
+
+    public List<String> getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(List<String> species) {
+        this.species = species;
+    }
+
+    public void setProjectTags(List<String> projectTags) {
+        this.projectTags = projectTags;
+    }
+
+    public void setMetaboligths(List<Metabolite> metaboligths) {
+        this.metaboligths = metaboligths;
+    }
+
+    public Set<String> getTissues() {
+        return tissues;
+    }
+
+    public void setTissues(Set<String> tissues) {
+        this.tissues = tissues;
+    }
+
+    public Set<String> getDiseases() {
+        return diseases;
+    }
+
+    public void setDiseases(Set<String> diseases) {
+        this.diseases = diseases;
     }
 }

@@ -92,7 +92,7 @@ public class WriterEBeyeXML {
 
             //Release date (This release date is related whit the day where the data was generated)
             Element releaseDate = document.createElement("release_date");
-            releaseDate.appendChild(document.createTextNode(new SimpleDateFormat("yy-MM-dd").format(new Date())));
+            releaseDate.appendChild(document.createTextNode(new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
             database.appendChild(releaseDate);
 
             Element entryCount = document.createElement("entry_count");
@@ -123,11 +123,13 @@ public class WriterEBeyeXML {
             Element crossReferences = document.createElement("cross_references");
             entry.appendChild(crossReferences);
 
-            if (project.getSpecie() != null && project.getSpecie().getTaxId() != null) {
-                Element refSpecies = document.createElement("ref");
-                refSpecies.setAttribute("dbkey", project.getSpecie().getTaxId());
-                refSpecies.setAttribute("dbname", "TAXONOMY");
-                crossReferences.appendChild(refSpecies);
+            if (project.getTaxonomies() != null && !project.getTaxonomies().isEmpty()){
+                for(String taxonomy: project.getTaxonomies()){
+                    Element refSpecies = document.createElement("ref");
+                    refSpecies.setAttribute("dbkey", taxonomy);
+                    refSpecies.setAttribute("dbname", "TAXONOMY");
+                    crossReferences.appendChild(refSpecies);
+                }
             }
 
             if (project !=null && project.getMetaboligths() != null && project.getMetaboligths().size() > 0 ) {
@@ -146,7 +148,7 @@ public class WriterEBeyeXML {
 
             if(project.getSubmissionDate() != null){
                 Element dateSubmitted = document.createElement("date");
-                dateSubmitted.setAttribute("value", new SimpleDateFormat("yy-MM-dd").format(project.getSubmissionDate()));
+                dateSubmitted.setAttribute("value", new SimpleDateFormat("yyyy-MM-dd").format(project.getSubmissionDate()));
                 dateSubmitted.setAttribute("type", "submission");
                 dates.appendChild(dateSubmitted);
             }
@@ -192,12 +194,13 @@ public class WriterEBeyeXML {
             //Add Instrument information
             if (project.getInstrument()!=null && project.getInstrument().size() > 0) {
                 for(Instrument instrument:project.getInstrument()){
-                    Element fieldInstruemnt = document.createElement("field");
-                    fieldInstruemnt.setAttribute("name", "instrument_platform");
-                    fieldInstruemnt.appendChild(document.createTextNode(instrument.getName()));
-                    additionalFields.appendChild(fieldInstruemnt);
+                    if(instrument != null){
+                        Element fieldInstruemnt = document.createElement("field");
+                        fieldInstruemnt.setAttribute("name", "instrument_platform");
+                        fieldInstruemnt.appendChild(document.createTextNode(instrument.getType()));
+                        additionalFields.appendChild(fieldInstruemnt);
+                    }
                 }
-
             } else {
                 Element fieldInstruemnt = document.createElement("field");
                 fieldInstruemnt.setAttribute("name", "instrument_platform");
@@ -218,11 +221,13 @@ public class WriterEBeyeXML {
             }
 
             //Add information about the species
-            if (project.getSpecie()!=null && project.getSpecie().getName() != null) {
-                Element refSpecies = document.createElement("field");
-                refSpecies.setAttribute("name", "species");
-                refSpecies.appendChild(document.createTextNode(project.getSpecie().getName()));
-                additionalFields.appendChild(refSpecies);
+            if (project.getSpecies()!=null && !project.getSpecie().isEmpty()) {
+                for(String specie: project.getSpecies()){
+                    Element refSpecies = document.createElement("field");
+                    refSpecies.setAttribute("name", "species");
+                    refSpecies.appendChild(document.createTextNode(specie));
+                    additionalFields.appendChild(refSpecies);
+                }
             } else {
                 Element refSpecies = document.createElement("field");
                 refSpecies.setAttribute("name", "species");
@@ -283,6 +288,39 @@ public class WriterEBeyeXML {
                     }
                 }
             }
+
+            //Add disease information
+            if (project.getDiseases()!=null && project.getDiseases().size()>0) {
+                for (String disease : project.getDiseases()) {
+                    Element refDisease = document.createElement("field");
+                    refDisease.setAttribute("name", "disease");
+                    refDisease.appendChild(document.createTextNode(disease));
+                    additionalFields.appendChild(refDisease);
+                }
+            } else {
+                Element refDisease = document.createElement("field");
+                refDisease.setAttribute("name", "disease");
+                refDisease.appendChild(document.createTextNode(NOT_AVAILABLE));
+                additionalFields.appendChild(refDisease);
+            }
+
+            //Tissue information
+            if (project.getTissues()!=null && project.getTissues().size()>0) {
+                for (String tissue : project.getTissues()) {
+                    Element fieldTissue = document.createElement("field");
+                    fieldTissue.setAttribute("name", "tissue");
+                    fieldTissue.appendChild(document.createTextNode(tissue));
+                    additionalFields.appendChild(fieldTissue);
+                }
+            } else {
+                Element fieldTissue = document.createElement("field");
+                fieldTissue.setAttribute("name", "tissue");
+                fieldTissue.appendChild(document.createTextNode(NOT_AVAILABLE));
+                additionalFields.appendChild(fieldTissue);
+            }
+
+
+
 
             //Add submitter information
             if(project.getSubmitter() != null){

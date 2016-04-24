@@ -3,7 +3,12 @@ package uk.ac.ebi.ddi.mw.extws.mw.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * This class modeled a Dataset Summary in Metabolomics Workbench. The dataset sumary contains only a
+ * few information like the study id, title, type of study
  * @author Yasset Perez-Riverol (ypriverol@gmail.com)
  * @date 18/05/2015
  */
@@ -44,7 +49,8 @@ public class DataSet {
 
     @JsonProperty("subject_species")
     String subject_species;
-    private String taxonomy;
+
+    private List<String> taxonomy;
 
     public String getId() {
         return id;
@@ -134,11 +140,17 @@ public class DataSet {
         this.subject_species = subject_species;
     }
 
-    public String getTaxonomy() {
+    public List<String> getTaxonomy() {
         return taxonomy;
     }
 
-    public void setTaxonomy(String taxonomy) {
-        this.taxonomy = taxonomy;
+    public void setTaxonomyArr(String[] taxonomy){
+        List<String> taxonomies = new ArrayList<String>();
+        if(taxonomy != null && taxonomy.length > 0){
+            for(String tax: taxonomy)
+                if(tax != null && !tax.isEmpty())
+                    taxonomies.add(tax);
+        }
+        this.taxonomy = taxonomies;
     }
 }
