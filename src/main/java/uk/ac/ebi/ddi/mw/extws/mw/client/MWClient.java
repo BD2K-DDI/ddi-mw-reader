@@ -1,5 +1,7 @@
 package uk.ac.ebi.ddi.mw.extws.mw.client;
 
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.ddi.mw.extws.mw.config.AbstractMWWsConfig;
 
@@ -20,7 +22,14 @@ public class MWClient {
      */
     public MWClient(AbstractMWWsConfig config){
         this.config = config;
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = new RestTemplate(clientHttpRequestFactory());
+    }
+
+    private ClientHttpRequestFactory clientHttpRequestFactory() {
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setReadTimeout(200000);
+        factory.setConnectTimeout(20000);
+        return factory;
     }
 
     public RestTemplate getRestTemplate() {

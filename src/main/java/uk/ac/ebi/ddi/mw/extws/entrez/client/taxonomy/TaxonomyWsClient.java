@@ -6,7 +6,6 @@ import uk.ac.ebi.ddi.mw.extws.entrez.config.TaxWsConfigProd;
 import uk.ac.ebi.ddi.mw.extws.entrez.ncbiresult.NCBITaxResult;
 import uk.ac.ebi.ddi.mw.extws.mw.model.Specie;
 
-import java.util.Iterator;
 import java.util.Set;
 
 
@@ -44,9 +43,8 @@ public class TaxonomyWsClient extends WsClient {
 
         String query = "";
         if(terms != null && terms.size() > 0){
-            Iterator<Specie> specieIterator = terms.iterator();
-            while (specieIterator.hasNext()){
-                query = query + "+OR+" + specieIterator.next().getLantinName();
+            for (Specie term : terms) {
+                query = query + "+OR+" + term.getLantinName();
             }
             query = query.replaceFirst("\\+OR\\+","");
             String url = String.format("%s://%s/entrez/eutils/esearch.fcgi?db=taxonomy&term=%s&retmode=JSON",

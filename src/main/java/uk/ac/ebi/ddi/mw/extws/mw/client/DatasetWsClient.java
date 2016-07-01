@@ -57,10 +57,14 @@ public class DatasetWsClient extends MWClient{
         try{
             analysisList = this.restTemplate.getForObject(url, AnalysisList.class);
         }catch(Exception e){
-            Analysis analysisSingle = this.restTemplate.getForObject(url, Analysis.class);
-            analysisList = new AnalysisList();
-            analysisList.analysisMap = new HashMap<String, Analysis>();
-            analysisList.analysisMap.put("1", analysisSingle);
+            try{
+                Analysis analysisSingle = this.restTemplate.getForObject(url, Analysis.class);
+                analysisList = new AnalysisList();
+                analysisList.analysisMap = new HashMap<String, Analysis>();
+                analysisList.analysisMap.put("1", analysisSingle);
+            }catch(Exception ex){
+                logger.debug(ex.getMessage());
+            }
         }
         return analysisList;
     }

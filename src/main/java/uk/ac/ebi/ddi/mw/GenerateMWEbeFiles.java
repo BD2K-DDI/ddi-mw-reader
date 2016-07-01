@@ -68,8 +68,6 @@ public class GenerateMWEbeFiles {
 
         TaxonomyWsClient taxonomyWsClient = new TaxonomyWsClient(taxWsConfigProd);
 
-        //RestTemplate rest = (RestTemplate) ctx.getBean("restTemplate");
-
         DatasetList datasets = datasetWsClient.getAllDatasets();
 
         TissueList tissueList   = datasetWsClient.getTissues();
