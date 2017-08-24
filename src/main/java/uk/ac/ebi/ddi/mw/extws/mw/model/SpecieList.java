@@ -2,6 +2,7 @@ package uk.ac.ebi.ddi.mw.extws.mw.model;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import uk.ac.ebi.ddi.mw.utils.Utilities;
 
 import java.util.HashMap;
 import java.util.HashSet;
