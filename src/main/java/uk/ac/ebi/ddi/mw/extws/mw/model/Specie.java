@@ -2,6 +2,7 @@ package uk.ac.ebi.ddi.mw.extws.mw.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.ac.ebi.ddi.mw.utils.Utilities;
 
 /**
  * @author Yasset Perez-Riverol (ypriverol@gmail.com)
@@ -29,7 +30,7 @@ public class Specie {
     }
 
     public String getLantinName() {
-        return lantinName;
+        return Utilities.toTitleCase(lantinName);
     }
 
     public void setLantinName(String lantinName) {
