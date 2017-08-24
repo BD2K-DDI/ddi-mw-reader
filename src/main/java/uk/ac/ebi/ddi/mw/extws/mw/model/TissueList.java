@@ -2,6 +2,7 @@ package uk.ac.ebi.ddi.mw.extws.mw.model;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import uk.ac.ebi.ddi.mw.utils.Utilities;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +36,7 @@ public class TissueList {
         if(tissues != null && !tissues.isEmpty())
             for(Tissue tissue: tissues.values())
                 if(tissue.getStudyId().equalsIgnoreCase(id))
-                    tissuesResult.add(tissue.getTissue());
+                    tissuesResult.add(Utilities.toTitleCase(tissue.getTissue()));
         return tissuesResult;
     }
 }
